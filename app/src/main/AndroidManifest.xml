@@ -20,6 +20,10 @@
             android:name=".DatabaseActivity"
             android:label="@string/title_activity_database" >
         </activity>
+        <activity
+            android:name=".TableActivity"
+            android:label="@string/title_activity_table" >
+        </activity>
     </application>
 
 </manifest>

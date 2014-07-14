@@ -13,5 +13,6 @@
     <string name="login_error">Wrong login/password</string>
     <string name="ok">OK</string>
     <string name="error">Error</string>
+    <string name="title_activity_table">TableActivity</string>
 
 </resources>
