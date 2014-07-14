@@ -25,11 +25,11 @@ public class DatabaseFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         //Inflate the layout for this fragment
-        View V = inflater.inflate(R.layout.fragment_database, container, false);
-        databasesListView = (ListView) V.findViewById(R.id.databaseList);
+        View rootView = inflater.inflate(R.layout.fragment_database, container, false);
+        databasesListView = (ListView) rootView.findViewById(R.id.databaseList);
 
         setupListViewDatabase();
-        return V;
+        return rootView;
     }
 
     private void setupListViewDatabase(){
@@ -40,9 +40,11 @@ public class DatabaseFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        String choosenDatabase =  (String) listAdapter.getItem(position);
         listAdapter.getItem(position);
         Intent intent = new Intent(getActivity(), TableActivity.class);
-        intent.putExtra("DatabaseName", (String) listAdapter.getItem(position));
+        intent.putExtra("DatabaseName",choosenDatabase);
+        Static.databaseConnector.setDatabaseInUse(choosenDatabase);
         startActivity(intent);
     }
 }
