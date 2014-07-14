@@ -27,7 +27,7 @@ public class DatabaseConnector {
     public static boolean checkLogin(String login, String password, String url){
         if (login.compareTo("nerull7")==0)
             return true;
-        if(password==null)
+        if(password.compareTo("")==0)
             errorMsg = "No Password";
         else
             errorMsg = "I don't know";
