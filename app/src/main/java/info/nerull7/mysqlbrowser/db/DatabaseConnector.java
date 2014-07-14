@@ -15,10 +15,23 @@ public class DatabaseConnector {
     private String database;
     private String table;
 
+    public static String errorMsg;
+
     public DatabaseConnector(String login, String password, String url){
         this.login = login;
         this.password = password;
         this.url = url;
+    }
+
+    // TODO Real checking
+    public static boolean checkLogin(String login, String password, String url){
+        if (login.compareTo("nerull7")==0)
+            return true;
+        if(password==null)
+            errorMsg = "No Password";
+        else
+            errorMsg = "I don't know";
+        return false;
     }
 
     public void setDatabaseInUse(String database){
