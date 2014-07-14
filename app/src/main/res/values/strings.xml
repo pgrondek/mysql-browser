@@ -8,5 +8,7 @@
     <string name="username">Username</string>
     <string name="hint_url">URL ex: https://example.com/c.php</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_database">DatabaseActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

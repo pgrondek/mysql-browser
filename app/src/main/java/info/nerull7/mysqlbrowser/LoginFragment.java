@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.app.Fragment;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -40,13 +41,15 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        DatabaseFragment databaseFragment = DatabaseFragment.newInstance(login.getText().toString(),
-                password.getText().toString(),
-                uri.getText().toString());
-
-        getFragmentManager().beginTransaction()
-                .add(R.id.container, databaseFragment)
-                .remove(this)
-                .commit();
+//        DatabaseFragment databaseFragment = DatabaseFragment.newInstance(login.getText().toString(),
+//                password.getText().toString(),
+//                uri.getText().toString());
+//
+//        getFragmentManager().beginTransaction()
+//                .add(R.id.container, databaseFragment)
+//                .remove(this)
+//                .commit();
+        Intent intent = new Intent(getActivity(), DatabaseActivity.class);
+        startActivity(intent);
     }
 }
