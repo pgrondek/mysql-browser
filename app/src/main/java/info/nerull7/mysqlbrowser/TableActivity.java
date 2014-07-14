@@ -19,10 +19,10 @@ public class TableActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_table);
+        setTitle(getIntent().getStringExtra("DatabaseName"));
+
         TableFragment tableFragment = new TableFragment();
         tableFragment.setArguments(getIntent().getExtras());
-//        Bundle bundle = new Bundle();
-
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, tableFragment)
