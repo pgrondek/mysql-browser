@@ -1,6 +1,7 @@
 package info.nerull7.mysqlbrowser;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +38,11 @@ public class TableFragment extends Fragment implements AdapterView.OnItemClickLi
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-
+        String choosenTable =  (String) listAdapter.getItem(position);
+        listAdapter.getItem(position);
+        Intent intent = new Intent(getActivity(), EntriesActivity.class);
+        intent.putExtra("DatabaseName",databaseName);
+        intent.putExtra("TableName",choosenTable);
+        startActivity(intent);
     }
 }

@@ -24,6 +24,10 @@
             android:name=".TableActivity"
             android:label="@string/title_activity_table" >
         </activity>
+        <activity
+            android:name=".EntriesActivity"
+            android:label="@string/title_activity_entries" >
+        </activity>
     </application>
 
 </manifest>

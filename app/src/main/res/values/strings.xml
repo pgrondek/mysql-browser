@@ -14,5 +14,6 @@
     <string name="ok">OK</string>
     <string name="error">Error</string>
     <string name="title_activity_table">TableActivity</string>
+    <string name="title_activity_entries">EntriesActivity</string>
 
 </resources>
