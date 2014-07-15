@@ -72,14 +72,18 @@ public class DatabaseConnector {
     }
 
     // TODO Real getRows
-    public List<String> getRows(int count){
+    public List<List<String>> getRows(int count){
         if(database==null) return null; // if database is not chosen return null
+        List<List<String>> stringListList = new ArrayList<List<String>>();
 
-        List<String> stringList = new ArrayList<String>();
-        stringList.add("Data 1");
-        stringList.add("Data 2");
-        stringList.add("Data 3");
-        stringList.add("Data 4");
-        return stringList;
+        for(int i=0;i<count;i++) {
+            List<String> stringList = new ArrayList<String>();
+            stringList.add("Data 1"+i);
+            stringList.add("Data 2"+i);
+            stringList.add("Data 3"+i);
+            stringList.add("Data 4"+i);
+            stringListList.add(stringList);
+        }
+        return stringListList;
     }
 }
