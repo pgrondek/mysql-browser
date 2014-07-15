@@ -25,13 +25,13 @@ public class DatabaseConnector {
 
     // TODO Real checking
     public static boolean checkLogin(String login, String password, String url){
-        if (login.compareTo("nerull7")==0)
+//        if (login.compareTo("nerull7")==0)
             return true;
-        if(password.compareTo("")==0)
-            errorMsg = "No Password";
-        else
-            errorMsg = "I don't know";
-        return false;
+//        if(password.compareTo("")==0)
+//            errorMsg = "No Password";
+//        else
+//            errorMsg = "I don't know";
+//        return false;
     }
 
     public void setDatabaseInUse(String database){
@@ -68,6 +68,7 @@ public class DatabaseConnector {
         stringList.add("Field 2");
         stringList.add("Field 3");
         stringList.add("Field 4");
+        stringList.add("Field 5");
         return stringList;
     }
 
@@ -82,6 +83,7 @@ public class DatabaseConnector {
             stringList.add("Data 2"+i);
             stringList.add("Data 3"+i);
             stringList.add("Data 4"+i);
+            stringList.add("Field aaa  aaaaaaaa  aaaaaa  aaaaa4"+i);
             stringListList.add(stringList);
         }
         return stringListList;
