@@ -10,7 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -25,7 +28,8 @@ public class EntriesFragment extends Fragment {
     String tableName;
     TableLayout entriesTable;
 //    TableLayout headerTable;
-    RelativeLayout uselessParent;
+    ScrollView entriesScrollView;
+    FrameLayout headerFrame;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,7 +39,8 @@ public class EntriesFragment extends Fragment {
         tableName = getArguments().getString("TableName");
         entriesTable = (TableLayout) rootView.findViewById(R.id.entriesTable);
 //        headerTable = (TableLayout) rootView.findViewById(R.id.headerTable);
-        uselessParent = (RelativeLayout) rootView.findViewById(R.id.uselessParent);
+        entriesScrollView = (ScrollView) rootView.findViewById(R.id.entriesScrollView);
+        headerFrame = (FrameLayout) rootView.findViewById(R.id.headerFrame);
         setupTable();
         return rootView;
     }
@@ -57,6 +62,7 @@ public class EntriesFragment extends Fragment {
         }
 //        headerTable.addView(headerRow);
         entriesTable.addView(headerRow);
+        headerRow.setVisibility(View.INVISIBLE);
 
         View fakeHeaderView = new View(getActivity()){
             @Override
@@ -76,8 +82,7 @@ public class EntriesFragment extends Fragment {
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             }
         };
-        fakeHeaderView.setBackgroundColor(getResources().getColor(android.R.color.background_light));
-        uselessParent.addView(fakeHeaderView);
+        headerFrame.addView(fakeHeaderView);
 
         // Now we get Rows
         List<List<String>> rows = Static.databaseConnector.getRows(20); //TODO some normal number definition in header

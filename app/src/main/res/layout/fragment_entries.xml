@@ -6,8 +6,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="info.nerull7.mysqlbrowser.EntriesFragment"
-    android:id="@+id/uselessParent">
+    tools:context="info.nerull7.mysqlbrowser.EntriesFragment">
 
     <!--<TableLayout-->
         <!--android:layout_width="fill_parent"-->
@@ -16,11 +15,16 @@
         <!--android:layout_alignParentStart="true"-->
         <!--android:layout_alignParentEnd="true"></TableLayout>-->
 
-    <ScrollView
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true">
+        android:id="@+id/headerFrame"></FrameLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/entriesScrollView"
+        android:layout_below="@+id/headerFrame">
         <TableLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
