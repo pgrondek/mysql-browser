@@ -2,7 +2,6 @@ package info.nerull7.mysqlbrowser;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 
 import java.util.HashMap;
 

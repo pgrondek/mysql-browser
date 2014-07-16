@@ -1,6 +1,5 @@
 package info.nerull7.mysqlbrowser;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,11 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-
-import info.nerull7.mysqlbrowser.db.DatabaseConnector;
 
 /**
  * Created by nerull7 on 14.07.14.
