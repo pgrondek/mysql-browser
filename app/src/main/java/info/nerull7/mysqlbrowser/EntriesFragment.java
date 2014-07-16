@@ -1,18 +1,13 @@
 package info.nerull7.mysqlbrowser;
 
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -27,7 +22,6 @@ public class EntriesFragment extends Fragment {
     String databaseName;
     String tableName;
     TableLayout entriesTable;
-//    TableLayout headerTable;
     ScrollView entriesScrollView;
     FrameLayout headerFrame;
 
@@ -38,7 +32,6 @@ public class EntriesFragment extends Fragment {
         databaseName = getArguments().getString("DatabaseName");
         tableName = getArguments().getString("TableName");
         entriesTable = (TableLayout) rootView.findViewById(R.id.entriesTable);
-//        headerTable = (TableLayout) rootView.findViewById(R.id.headerTable);
         entriesScrollView = (ScrollView) rootView.findViewById(R.id.entriesScrollView);
         headerFrame = (FrameLayout) rootView.findViewById(R.id.headerFrame);
         setupTable();
@@ -60,15 +53,12 @@ public class EntriesFragment extends Fragment {
             textView.setLayoutParams(layoutParams);
             headerRow.addView(textView);
         }
-//        headerTable.addView(headerRow);
-        entriesTable.addView(headerRow);
         headerRow.setVisibility(View.INVISIBLE);
 
         View fakeHeaderView = new View(getActivity()){
             @Override
             public void draw(Canvas canvas) {
                 headerRow.draw(canvas);
-//                super.draw(canvas);
             }
 
             @Override
@@ -97,5 +87,7 @@ public class EntriesFragment extends Fragment {
             }
             entriesTable.addView(newRow);
         }
+
+        entriesTable.addView(headerRow);
     }
 }
