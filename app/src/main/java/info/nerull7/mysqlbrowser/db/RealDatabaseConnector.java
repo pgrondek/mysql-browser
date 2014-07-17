@@ -3,6 +3,9 @@ package info.nerull7.mysqlbrowser.db;
 import android.os.StrictMode;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -99,11 +102,17 @@ public class RealDatabaseConnector implements DatabaseConnector {
         return urlBuilder;
     }
 
-    // TODO Real checking
+    private String actionUrlBuilder(String action){
+        String urlBuilder = actionUrlBuilder(login, password, url, action);;
+        if(action.compareTo("tablelist")==0)
+            urlBuilder+= "&d="+database;
+        return urlBuilder;
+    }
+
     public static boolean checkLogin(String login, String password, String url){
         errorMsg = null;
         try {
-            String response = httpRequest(actionUrlBuilder(login,password,url,"login"));
+            String response = httpRequest(actionUrlBuilder(login,password,url,"login")); // TODO Redefine as public static final
             if(response==null)
                 return false;
             if(response.compareTo("OK")==0){
@@ -123,25 +132,32 @@ public class RealDatabaseConnector implements DatabaseConnector {
         this.database = database;
     }
 
-    // TODO Real connection
+    private List<String> getList(String listName){
+        try {
+            String response = httpRequest(actionUrlBuilder(listName));
+            if(response==null)
+                return null;
+            JSONArray jsonArray = new JSONArray(response);
+            List<String> databaseStringList = new ArrayList<String>();
+            for(int i=0;i<jsonArray.length();i++){
+                databaseStringList.add(jsonArray.getString(i));
+            }
+            return databaseStringList;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public List<String> getDatabases(){
-        List<String> stringList = new ArrayList<String>();
-        stringList.add("Wordpress");
-        stringList.add("DB1");
-        stringList.add("owncloud");
-        Collections.sort(stringList);
-        return stringList;
+        return getList("dblist"); // TODO Redefine as public static final
     }
 
     // TODO Real getTables
     public List<String> getTables(){
-        if(database==null) return null; // if database is not chosen return null
-
-        List<String> stringList = new ArrayList<String>();
-        stringList.add(database + ".Table1");
-        stringList.add(database + ".Table2");
-        stringList.add(database + ".Table3");
-        return  stringList;
+        return getList("tablelist"); // TODO Redefine as public static final
     }
 
     // TODO Real getFields
