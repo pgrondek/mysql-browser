@@ -49,7 +49,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         password = passwordTextbox.getText().toString();
         url = urlTextbox.getText().toString();
         if(RealDatabaseConnector.checkLogin(login, password, url)) {
-            Static.databaseConnector = new FakeDatabaseConnector(login, password, url);
+            Static.databaseConnector = new RealDatabaseConnector(login, password, url);
             Intent intent = new Intent(getActivity(), DatabaseActivity.class);
             startActivity(intent);
         }
