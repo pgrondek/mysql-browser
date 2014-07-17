@@ -161,20 +161,31 @@ public class RealDatabaseConnector implements DatabaseConnector {
         return getList(actionUrlBuilder("fieldlist")+"&d="+database+"&t="+table); // TODO Redefine as public static final
     }
 
-    // TODO Real getRows
-    public List<List<String>> getRows(int count){
-        if(database==null) return null; // if database is not chosen return null
-        List<List<String>> stringListList = new ArrayList<List<String>>();
-
-        for(int i=0;i<count;i++) {
-            List<String> stringList = new ArrayList<String>();
-            stringList.add("Data 1"+i);
-            stringList.add("Data 2"+i);
-            stringList.add("Data 3"+i);
-            stringList.add("Data 4"+i);
-            stringList.add("Field aaa  aaaaaaaa  aaaaaa  aaaaa4"+i);
-            stringListList.add(stringList);
+    private List<List<String>> getMatrix(String urlQuery){
+        try {
+            String response = httpRequest(urlQuery);
+            if(response==null)
+                return null;
+            JSONArray jsonMatrix = new JSONArray(response);
+            List<List<String>> matrix = new ArrayList<List<String>>();
+            for(int i=0;i<jsonMatrix.length();i++){
+                JSONArray jsonArray = jsonMatrix.getJSONArray(i);
+                List<String> list = new ArrayList<String>();
+                for(int j=0;j<jsonArray.length();j++){
+                    list.add(jsonArray.getString(j));
+                }
+                matrix.add(list);
+            }
+            return matrix;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        return stringListList;
+        return null;
+    }
+
+    public List<List<String>> getRows(String table, int count){
+        return getMatrix(actionUrlBuilder("select")+"&d="+database+"&t="+table+"&s="+0+"&l="+count); //FIXME
     }
 }
