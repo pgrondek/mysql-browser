@@ -103,9 +103,7 @@ public class RealDatabaseConnector implements DatabaseConnector {
     }
 
     private String actionUrlBuilder(String action){
-        String urlBuilder = actionUrlBuilder(login, password, url, action);;
-        if(action.compareTo("tablelist")==0)
-            urlBuilder+= "&d="+database;
+        String urlBuilder = actionUrlBuilder(login, password, url, action);
         return urlBuilder;
     }
 
@@ -132,9 +130,9 @@ public class RealDatabaseConnector implements DatabaseConnector {
         this.database = database;
     }
 
-    private List<String> getList(String listName){
+    private List<String> getList(String urlQuerry){
         try {
-            String response = httpRequest(actionUrlBuilder(listName));
+            String response = httpRequest(urlQuerry);
             if(response==null)
                 return null;
             JSONArray jsonArray = new JSONArray(response);
@@ -152,25 +150,15 @@ public class RealDatabaseConnector implements DatabaseConnector {
     }
 
     public List<String> getDatabases(){
-        return getList("dblist"); // TODO Redefine as public static final
+        return getList(actionUrlBuilder("dblist")); // TODO Redefine as public static final
     }
 
-    // TODO Real getTables
     public List<String> getTables(){
-        return getList("tablelist"); // TODO Redefine as public static final
+        return getList(actionUrlBuilder("tablelist")+"&d="+database); // TODO Redefine as public static final
     }
 
-    // TODO Real getFields
     public List<String> getFields(String table){
-        if(database==null) return null; // if database is not chosen return null
-
-        List<String> stringList = new ArrayList<String>();
-        stringList.add("Field 1");
-        stringList.add("Field 2");
-        stringList.add("Field 3");
-        stringList.add("Field 4");
-        stringList.add("Field 5");
-        return stringList;
+        return getList(actionUrlBuilder("fieldlist")+"&d="+database+"&t="+table); // TODO Redefine as public static final
     }
 
     // TODO Real getRows
