@@ -130,9 +130,9 @@ public class RealDatabaseConnector implements DatabaseConnector {
         this.database = database;
     }
 
-    private List<String> getList(String urlQuerry){
+    private List<String> getList(String urlQuery){
         try {
-            String response = httpRequest(urlQuerry);
+            String response = httpRequest(urlQuery);
             if(response==null)
                 return null;
             JSONArray jsonArray = new JSONArray(response);
