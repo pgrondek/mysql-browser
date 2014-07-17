@@ -10,7 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import info.nerull7.mysqlbrowser.db.DatabaseConnector;
+import info.nerull7.mysqlbrowser.db.FakeDatabaseConnector;
+import info.nerull7.mysqlbrowser.db.RealDatabaseConnector;
 
 /**
  * Created by nerull7 on 07.07.14.
@@ -47,14 +48,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         login = loginTextbox.getText().toString();
         password = passwordTextbox.getText().toString();
         url = urlTextbox.getText().toString();
-        if(DatabaseConnector.checkLogin(login, password, url)) {
-            Static.databaseConnector = new DatabaseConnector(login, password, url);
+        if(RealDatabaseConnector.checkLogin(login, password, url)) {
+            Static.databaseConnector = new FakeDatabaseConnector(login, password, url);
             Intent intent = new Intent(getActivity(), DatabaseActivity.class);
             startActivity(intent);
         }
         else {
             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(DatabaseConnector.errorMsg);
+            builder.setMessage(RealDatabaseConnector.errorMsg);
             builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
