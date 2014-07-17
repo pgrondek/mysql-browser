@@ -75,8 +75,8 @@ public class EntriesFragment extends Fragment {
         headerFrame.addView(fakeHeaderView);
 
         // Now we get Rows
-        List<List<String>> rows = Static.databaseConnector.getRows(20); //TODO some normal number definition in header
-        for(int i=0;i<20;i++){ // The same arbitrary number FIXME
+        List<List<String>> rows = Static.databaseConnector.getRows(tableName, 50); //TODO some normal number definition in header
+        for(int i=0;i<rows.size();i++){ // The same arbitrary number FIXME
             List<String> elements = rows.get(i);
             TableRow newRow = new TableRow(getActivity());
             for(int j=0;j<elements.size();j++) { // elements.size is the same as in header so maybe some one number ?
