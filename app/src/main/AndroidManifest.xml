@@ -28,6 +28,11 @@
             android:name=".EntriesActivity"
             android:label="@string/title_activity_entries" >
         </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_setting"
+            android:icon="@drawable/ic_action_settings">
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

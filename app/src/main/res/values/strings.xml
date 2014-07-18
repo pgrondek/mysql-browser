@@ -15,5 +15,9 @@
     <string name="error">Error</string>
     <string name="title_activity_table">TableActivity</string>
     <string name="title_activity_entries">EntriesActivity</string>
+    <string name="general_category">General</string>
+    <string name="entries_limit">Entries per page limit</string>
+    <string name="entries_summary">20 FIXME entries per page</string>
+    <string name="title_activity_setting">Settings</string>
 
 </resources>
