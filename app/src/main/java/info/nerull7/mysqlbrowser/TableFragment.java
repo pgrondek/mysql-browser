@@ -31,6 +31,7 @@ public class TableFragment extends Fragment implements AdapterView.OnItemClickLi
 
     private void setupList(){
         listAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, Static.databaseConnector.getTables());
+        // TODO No tables handling
         tablesList.setAdapter(listAdapter);
         tablesList.setOnItemClickListener(this);
     }

@@ -23,15 +23,8 @@ public class FakeDatabaseConnector implements DatabaseConnector {
         this.url = url;
     }
 
-    // TODO Real checking
     public static boolean checkLogin(String login, String password, String url){
-//        if (login.compareTo("nerull7")==0)
             return true;
-//        if(password.compareTo("")==0)
-//            errorMsg = "No Password";
-//        else
-//            errorMsg = "I don't know";
-//        return false;
     }
 
     @Override
@@ -39,7 +32,6 @@ public class FakeDatabaseConnector implements DatabaseConnector {
         this.database = database;
     }
 
-    // TODO Real connection
     @Override
     public List<String> getDatabases(){
         List<String> stringList = new ArrayList<String>();
@@ -50,7 +42,6 @@ public class FakeDatabaseConnector implements DatabaseConnector {
         return stringList;
     }
 
-    // TODO Real getTables
     @Override
     public List<String> getTables(){
         if(database==null) return null; // if database is not chosen return null
@@ -62,7 +53,6 @@ public class FakeDatabaseConnector implements DatabaseConnector {
         return  stringList;
     }
 
-    // TODO Real getFields
     @Override
     public List<String> getFields(String table){
         if(database==null) return null; // if database is not chosen return null
@@ -76,7 +66,6 @@ public class FakeDatabaseConnector implements DatabaseConnector {
         return stringList;
     }
 
-    // TODO Real getRows
     @Override
     public List<List<String>> getRows(String table, int count){
         if(database==null) return null; // if database is not chosen return null

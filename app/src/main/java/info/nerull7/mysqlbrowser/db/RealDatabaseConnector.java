@@ -45,7 +45,7 @@ public class RealDatabaseConnector implements DatabaseConnector {
     private static String httpRequest(String urlRequest) throws IOException {
         disableStrictMode(); // FIXME
         URL url = new URL(urlRequest);
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();  // TODO Handling no connection
         InputStream inputStream = null;
         String response;
         if(urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -58,13 +58,6 @@ public class RealDatabaseConnector implements DatabaseConnector {
             return response;
         }
         else {
-//            try {
-//                inputStream = new BufferedInputStream(urlConnection.getErrorStream());
-//                errorMsg = readStream(inputStream);
-//            } finally {
-//                urlConnection.disconnect();
-//            }
-//            return null;
             errorMsg = "ERROR: "+urlConnection.getResponseCode();
             return null;
         }

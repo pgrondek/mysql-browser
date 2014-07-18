@@ -38,7 +38,7 @@ public class EntriesFragment extends Fragment {
         return rootView;
     }
 
-    private void setupTable(){
+    private void setupTable(){ // TODO Empty table handling
         List<String> fieldList = Static.databaseConnector.getFields(tableName);
 
         TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);

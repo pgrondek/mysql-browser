@@ -28,7 +28,7 @@ public class DatabaseFragment extends Fragment implements AdapterView.OnItemClic
         return rootView;
     }
 
-    private void setupListViewDatabase(){
+    private void setupListViewDatabase(){ // TODO: Handle no databases available problem
         listAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, Static.databaseConnector.getDatabases());
         databasesListView.setAdapter(listAdapter);
         databasesListView.setOnItemClickListener(this);
