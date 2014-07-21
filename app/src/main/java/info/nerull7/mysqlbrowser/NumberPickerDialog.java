@@ -66,7 +66,7 @@ public class NumberPickerDialog extends AlertDialog implements DialogInterface.O
         setTitle(title);
 
         setButton(DialogInterface.BUTTON_POSITIVE, context.getText(R.string.set), this);
-        setButton(DialogInterface.BUTTON_NEGATIVE, context.getText(R.string.no),
+        setButton(DialogInterface.BUTTON_NEGATIVE, context.getText(R.string.cancel),
                 (OnClickListener) null);
 
         LayoutInflater inflater =

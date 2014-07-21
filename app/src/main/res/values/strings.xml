@@ -17,7 +17,10 @@
     <string name="title_activity_entries">EntriesActivity</string>
     <string name="general_category">General</string>
     <string name="entries_limit">Entries per page limit</string>
-    <string name="entries_summary">20 FIXME entries per page</string>
+    <string name="entries_summary">%s entries per page</string><!--<xliff:g id="count"></xliff:g>-->
     <string name="title_activity_setting">Settings</string>
+    <string name="cancel">Cancel</string>
+    <string name="set">Set</string>
+    <string name="pref_entries_per_page">Set number of entries per page</string>
 
 </resources>
