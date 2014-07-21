@@ -1,6 +1,7 @@
 package info.nerull7.mysqlbrowser;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ public class EntriesFragment extends Fragment {
     TableLayout entriesTable;
     ScrollView entriesScrollView;
     FrameLayout headerFrame;
+    private int entriesLimit;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,6 +36,7 @@ public class EntriesFragment extends Fragment {
         entriesTable = (TableLayout) rootView.findViewById(R.id.entriesTable);
         entriesScrollView = (ScrollView) rootView.findViewById(R.id.entriesScrollView);
         headerFrame = (FrameLayout) rootView.findViewById(R.id.headerFrame);
+        entriesLimit = getActivity().getSharedPreferences(SettingsFragment.PREFERENCE_FILE, Context.MODE_PRIVATE).getInt(SettingsFragment.ENTRIES_PAGE_LIMIT, SettingsFragment.ENTRIES_PAGE_LIMIT_DEF);
         setupTable();
         return rootView;
     }
@@ -75,11 +78,11 @@ public class EntriesFragment extends Fragment {
         headerFrame.addView(fakeHeaderView);
 
         // Now we get Rows
-        List<List<String>> rows = Static.databaseConnector.getRows(tableName, 50); //TODO some normal number definition in header
-        for(int i=0;i<rows.size();i++){ // The same arbitrary number FIXME
+        List<List<String>> rows = Static.databaseConnector.getRows(tableName, entriesLimit);
+        for(int i=0;i<rows.size();i++){
             List<String> elements = rows.get(i);
             TableRow newRow = new TableRow(getActivity());
-            for(int j=0;j<elements.size();j++) { // elements.size is the same as in header so maybe some one number ?
+            for(int j=0;j<elements.size();j++) { // elements.size can be the same as in header so maybe some one number or not
                 TextView textView = new TextView(getActivity());
                 textView.setText(elements.get(j));
                 textView.setLayoutParams(layoutParams);
