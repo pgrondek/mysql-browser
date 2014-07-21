@@ -53,11 +53,11 @@ public class DatabaseFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        String choosenDatabase =  (String) listAdapter.getItem(position);
+        String chosenDatabase =  (String) listAdapter.getItem(position);
         listAdapter.getItem(position);
         Intent intent = new Intent(getActivity(), TableActivity.class);
-        intent.putExtra("DatabaseName",choosenDatabase);
-        Static.databaseConnector.setDatabaseInUse(choosenDatabase);
+        intent.putExtra("DatabaseName",chosenDatabase);
+        Static.databaseConnector.setDatabaseInUse(chosenDatabase);
         startActivity(intent);
     }
 }
