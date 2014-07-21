@@ -35,9 +35,9 @@ public class TableActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-        //TODO Handling menu
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            Static.startSettings(this);
             return true;
         }
         return super.onOptionsItemSelected(item);
