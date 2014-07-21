@@ -17,9 +17,9 @@ import info.nerull7.mysqlbrowser.db.RealDatabaseConnector;
  * Created by nerull7 on 07.07.14.
  */
 public class LoginFragment extends Fragment implements View.OnClickListener {
-    EditText urlTextbox;
-    EditText loginTextbox;
-    EditText passwordTextbox; // TODO: Mega super epic security (RSA/AES maybe?)
+    private EditText urlTextbox;
+    private EditText loginTextbox;
+    private EditText passwordTextbox; // TODO: Mega super epic security (RSA/AES maybe?)
 
     public LoginFragment(){
 

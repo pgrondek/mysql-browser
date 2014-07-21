@@ -15,9 +15,9 @@ import android.widget.ListView;
  * Created by nerull7 on 14.07.14.
  */
 public class TableFragment extends Fragment implements AdapterView.OnItemClickListener {
-    String databaseName;
-    ListView tablesList;
-    ListAdapter listAdapter;
+    private String databaseName;
+    private ListView tablesList;
+    private ListAdapter listAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

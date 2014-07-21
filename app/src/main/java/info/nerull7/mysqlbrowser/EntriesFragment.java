@@ -20,11 +20,11 @@ import java.util.List;
  * Created by nerull7 on 15.07.14.
  */
 public class EntriesFragment extends Fragment {
-    String databaseName;
-    String tableName;
-    TableLayout entriesTable;
-    ScrollView entriesScrollView;
-    FrameLayout headerFrame;
+    private String databaseName;
+    private String tableName;
+    private TableLayout entriesTable;
+    private ScrollView entriesScrollView;
+    private FrameLayout headerFrame;
     private int entriesLimit;
 
     @Override
