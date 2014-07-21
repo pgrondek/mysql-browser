@@ -2,14 +2,20 @@ package info.nerull7.mysqlbrowser;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import java.util.List;
 
 /**
  * Created by nerull7 on 14.07.14.
@@ -18,6 +24,7 @@ public class TableFragment extends Fragment implements AdapterView.OnItemClickLi
     private String databaseName;
     private ListView tablesList;
     private ListAdapter listAdapter;
+    private RelativeLayout rootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -25,15 +32,25 @@ public class TableFragment extends Fragment implements AdapterView.OnItemClickLi
         View rootView = inflater.inflate(R.layout.fragment_table, container, false);
         databaseName = getArguments().getString("DatabaseName");
         tablesList = (ListView) rootView.findViewById(R.id.tableList);
+        this.rootView = (RelativeLayout) rootView;
         setupList();
         return rootView;
     }
 
     private void setupList(){
-        listAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, Static.databaseConnector.getTables());
-        // TODO No tables handling
-        tablesList.setAdapter(listAdapter);
-        tablesList.setOnItemClickListener(this);
+        List<String> tables = Static.databaseConnector.getTables();
+        if(tables != null) {
+            listAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, tables);
+            tablesList.setAdapter(listAdapter);
+            tablesList.setOnItemClickListener(this);
+        } else {
+            TextView errorMessage = new TextView(getActivity());
+            errorMessage.setText(R.string.error_no_tables);
+            errorMessage.setTypeface(null, Typeface.ITALIC);
+            errorMessage.setClickable(false);
+            rootView.addView(errorMessage);
+            rootView.removeView(tablesList);
+        }
     }
 
     @Override

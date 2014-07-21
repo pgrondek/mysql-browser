@@ -22,5 +22,8 @@
     <string name="cancel">Cancel</string>
     <string name="set">Set</string>
     <string name="pref_entries_per_page">Set number of entries per page</string>
+    <string name="error_no_tables">No tables in this database</string>
+    <string name="error_no_entries">No entries in this table</string>
+    <string name="error_no_databases">No available databases</string>
 
 </resources>

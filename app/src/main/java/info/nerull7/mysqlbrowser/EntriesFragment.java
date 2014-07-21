@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -26,6 +27,7 @@ public class EntriesFragment extends Fragment {
     private ScrollView entriesScrollView;
     private FrameLayout headerFrame;
     private int entriesLimit;
+    private RelativeLayout rootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,11 +39,12 @@ public class EntriesFragment extends Fragment {
         entriesScrollView = (ScrollView) rootView.findViewById(R.id.entriesScrollView);
         headerFrame = (FrameLayout) rootView.findViewById(R.id.headerFrame);
         entriesLimit = getActivity().getSharedPreferences(SettingsFragment.PREFERENCE_FILE, Context.MODE_PRIVATE).getInt(SettingsFragment.ENTRIES_PAGE_LIMIT, SettingsFragment.ENTRIES_PAGE_LIMIT_DEF);
+        this.rootView = (RelativeLayout) rootView;
         setupTable();
         return rootView;
     }
 
-    private void setupTable(){ // TODO Empty table handling
+    private void setupTable(){
         List<String> fieldList = Static.databaseConnector.getFields(tableName);
 
         TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
@@ -79,18 +82,28 @@ public class EntriesFragment extends Fragment {
 
         // Now we get Rows
         List<List<String>> rows = Static.databaseConnector.getRows(tableName, entriesLimit);
-        for(int i=0;i<rows.size();i++){
-            List<String> elements = rows.get(i);
-            TableRow newRow = new TableRow(getActivity());
-            for(int j=0;j<elements.size();j++) { // elements.size can be the same as in header so maybe some one number or not
-                TextView textView = new TextView(getActivity());
-                textView.setText(elements.get(j));
-                textView.setLayoutParams(layoutParams);
-                newRow.addView(textView);
+        if(rows!=null) {
+            for (int i = 0; i < rows.size(); i++) {
+                List<String> elements = rows.get(i);
+                TableRow newRow = new TableRow(getActivity());
+                for (int j = 0; j < elements.size(); j++) { // elements.size can be the same as in header so maybe some one number or not
+                    TextView textView = new TextView(getActivity());
+                    textView.setText(elements.get(j));
+                    textView.setLayoutParams(layoutParams);
+                    newRow.addView(textView);
+                }
+                entriesTable.addView(newRow);
             }
-            entriesTable.addView(newRow);
+            entriesTable.addView(headerRow);
+        } else {
+            TextView errorMessage = new TextView(getActivity());
+            errorMessage.setText(R.string.error_no_entries);
+            errorMessage.setTypeface(null, Typeface.ITALIC);
+            errorMessage.setClickable(false);
+            entriesScrollView.removeView(entriesTable);
+            rootView.addView(errorMessage);
+            headerFrame.addView(headerRow);
+            headerRow.setVisibility(View.VISIBLE);
         }
-
-        entriesTable.addView(headerRow);
     }
 }
