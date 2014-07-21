@@ -1,5 +1,6 @@
 package info.nerull7.mysqlbrowser;
 
+import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -21,13 +22,15 @@ import java.util.List;
  * Created by nerull7 on 15.07.14.
  */
 public class EntriesFragment extends Fragment {
-    private String databaseName;
-    private String tableName;
     private TableLayout entriesTable;
     private ScrollView entriesScrollView;
     private FrameLayout headerFrame;
-    private int entriesLimit;
     private RelativeLayout rootView;
+
+    private String databaseName;
+    private String tableName;
+    private int entriesLimit;
+    private int page;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,9 +43,16 @@ public class EntriesFragment extends Fragment {
         headerFrame = (FrameLayout) rootView.findViewById(R.id.headerFrame);
         entriesLimit = getActivity().getSharedPreferences(SettingsFragment.PREFERENCE_FILE, Context.MODE_PRIVATE).getInt(SettingsFragment.ENTRIES_PAGE_LIMIT, SettingsFragment.ENTRIES_PAGE_LIMIT_DEF);
         this.rootView = (RelativeLayout) rootView;
+        page = getArguments().getInt("Page");
         setupTable();
+//        setupActionBar();
         return rootView;
     }
+
+//    private void setupActionBar() {
+//        ActionBar actionBar = getActivity().getActionBar();
+//        actionBar.
+//    }
 
     private void setupTable(){
         List<String> fieldList = Static.databaseConnector.getFields(tableName);
@@ -81,7 +91,7 @@ public class EntriesFragment extends Fragment {
         headerFrame.addView(fakeHeaderView);
 
         // Now we get Rows
-        List<List<String>> rows = Static.databaseConnector.getRows(tableName, entriesLimit);
+        List<List<String>> rows = Static.databaseConnector.getRows(tableName, entriesLimit, page);
         if(rows!=null) {
             for (int i = 0; i < rows.size(); i++) {
                 List<String> elements = rows.get(i);

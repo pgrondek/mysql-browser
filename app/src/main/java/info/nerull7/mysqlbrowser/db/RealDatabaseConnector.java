@@ -178,7 +178,8 @@ public class RealDatabaseConnector implements DatabaseConnector {
         return null;
     }
 
-    public List<List<String>> getRows(String table, int count){
-        return getMatrix(actionUrlBuilder("getrows")+"&d="+database+"&t="+table+"&s="+0+"&l="+count); //FIXME
+    public List<List<String>> getRows(String table, int count, int page){
+        int limitStart = page * count;
+        return getMatrix(actionUrlBuilder("getrows")+"&d="+database+"&t="+table+"&s="+limitStart+"&l="+count); //FIXME
     }
 }

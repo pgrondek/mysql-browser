@@ -25,5 +25,7 @@
     <string name="error_no_tables">No tables in this database</string>
     <string name="error_no_entries">No entries in this table</string>
     <string name="error_no_databases">No available databases</string>
+    <string name="action_previous">Previous</string>
+    <string name="action_next">Next</string>
 
 </resources>

@@ -14,5 +14,5 @@ public interface DatabaseConnector {
 
     List<String> getFields(String table);
 
-    List<List<String>> getRows(String table, int count);
+    List<List<String>> getRows(String table, int count, int page);
 }

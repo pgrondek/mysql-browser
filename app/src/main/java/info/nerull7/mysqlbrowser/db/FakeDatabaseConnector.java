@@ -67,7 +67,7 @@ public class FakeDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
-    public List<List<String>> getRows(String table, int count){
+    public List<List<String>> getRows(String table, int count, int page){
         if(database==null) return null; // if database is not chosen return null
         List<List<String>> stringListList = new ArrayList<List<String>>();
 
