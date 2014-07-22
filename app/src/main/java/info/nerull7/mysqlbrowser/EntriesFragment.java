@@ -18,14 +18,18 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
+
 /**
  * Created by nerull7 on 15.07.14.
  */
-public class EntriesFragment extends Fragment {
+public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.MatrixReturnListener, AsyncDatabaseConnector.ListReturnListener{
     private TableLayout entriesTable;
     private ScrollView entriesScrollView;
     private FrameLayout headerFrame;
     private RelativeLayout rootView;
+    private TableRow.LayoutParams layoutParams;
+    private TableRow headerRow;
 
     private String databaseName;
     private String tableName;
@@ -44,8 +48,14 @@ public class EntriesFragment extends Fragment {
         entriesLimit = getActivity().getSharedPreferences(SettingsFragment.PREFERENCE_FILE, Context.MODE_PRIVATE).getInt(SettingsFragment.ENTRIES_PAGE_LIMIT, SettingsFragment.ENTRIES_PAGE_LIMIT_DEF);
         this.rootView = (RelativeLayout) rootView;
         page = getArguments().getInt("Page");
-        setupTable();
 //        setupActionBar();
+
+        headerRow = new TableRow(getActivity());
+        layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+
+        Static.asyncDatabaseConnector.setListReturnListener(this);
+        Static.asyncDatabaseConnector.getFields(tableName);
+
         return rootView;
     }
 
@@ -54,13 +64,37 @@ public class EntriesFragment extends Fragment {
 //        actionBar.
 //    }
 
-    private void setupTable(){
-        List<String> fieldList = Static.databaseConnector.getFields(tableName);
+    @Override
+    public void onMatrixReturn(List<List<String>> rows) {
+        // Now we get Rows
+        if(rows!=null) {
+            for (int i = 0; i < rows.size(); i++) {
+                List<String> elements = rows.get(i);
+                TableRow newRow = new TableRow(getActivity());
+                for (int j = 0; j < elements.size(); j++) { // elements.size can be the same as in header so maybe some one number or not
+                    TextView textView = new TextView(getActivity());
+                    textView.setText(elements.get(j));
+                    textView.setLayoutParams(layoutParams);
+                    newRow.addView(textView);
+                }
+                entriesTable.addView(newRow);
+            }
+            entriesTable.addView(headerRow);
+        } else {
+            TextView errorMessage = new TextView(getActivity());
+            errorMessage.setText(R.string.error_no_entries);
+            errorMessage.setTypeface(null, Typeface.ITALIC);
+            errorMessage.setClickable(false);
+            entriesScrollView.removeView(entriesTable);
+            rootView.addView(errorMessage);
+            headerFrame.addView(headerRow);
+            headerRow.setVisibility(View.VISIBLE);
+        }
+    }
 
-        TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-
+    @Override
+    public void onListReturn(List<String> fieldList) { // TODO: Fix bug not showing header
         // First we need header
-        final TableRow headerRow = new TableRow(getActivity());
         headerRow.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
         for(int i =0;i<fieldList.size();i++){
             TextView textView = new TextView(getActivity());
@@ -90,30 +124,7 @@ public class EntriesFragment extends Fragment {
         };
         headerFrame.addView(fakeHeaderView);
 
-        // Now we get Rows
-        List<List<String>> rows = Static.databaseConnector.getRows(tableName, entriesLimit, page);
-        if(rows!=null) {
-            for (int i = 0; i < rows.size(); i++) {
-                List<String> elements = rows.get(i);
-                TableRow newRow = new TableRow(getActivity());
-                for (int j = 0; j < elements.size(); j++) { // elements.size can be the same as in header so maybe some one number or not
-                    TextView textView = new TextView(getActivity());
-                    textView.setText(elements.get(j));
-                    textView.setLayoutParams(layoutParams);
-                    newRow.addView(textView);
-                }
-                entriesTable.addView(newRow);
-            }
-            entriesTable.addView(headerRow);
-        } else {
-            TextView errorMessage = new TextView(getActivity());
-            errorMessage.setText(R.string.error_no_entries);
-            errorMessage.setTypeface(null, Typeface.ITALIC);
-            errorMessage.setClickable(false);
-            entriesScrollView.removeView(entriesTable);
-            rootView.addView(errorMessage);
-            headerFrame.addView(headerRow);
-            headerRow.setVisibility(View.VISIBLE);
-        }
+        Static.asyncDatabaseConnector.setMatrixReturnListener(this);
+        Static.asyncDatabaseConnector.getRows(tableName, entriesLimit, page);
     }
 }

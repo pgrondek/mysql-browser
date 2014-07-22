@@ -16,10 +16,12 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
+
 /**
  * Created by nerull7 on 14.07.14.
  */
-public class DatabaseFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class DatabaseFragment extends Fragment implements AdapterView.OnItemClickListener, AsyncDatabaseConnector.ListReturnListener {
     private ListView databasesListView;
     private ListAdapter listAdapter;
     private RelativeLayout rootView;
@@ -31,12 +33,23 @@ public class DatabaseFragment extends Fragment implements AdapterView.OnItemClic
         databasesListView = (ListView) rootView.findViewById(R.id.databaseList);
         this.rootView = (RelativeLayout) rootView;
 
-        setupListViewDatabase();
+        Static.asyncDatabaseConnector.setListReturnListener(this);
+        Static.asyncDatabaseConnector.getDatabases();
         return rootView;
     }
 
-    private void setupListViewDatabase(){
-        List<String> databases = Static.databaseConnector.getDatabases();
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        String chosenDatabase =  (String) listAdapter.getItem(position);
+        listAdapter.getItem(position);
+        Intent intent = new Intent(getActivity(), TableActivity.class);
+        intent.putExtra("DatabaseName",chosenDatabase);
+        Static.asyncDatabaseConnector.setDatabaseInUse(chosenDatabase);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onListReturn(List<String> databases) {
         if(databases!= null) {
             listAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, databases);
             databasesListView.setAdapter(listAdapter);
@@ -49,15 +62,5 @@ public class DatabaseFragment extends Fragment implements AdapterView.OnItemClic
             rootView.addView(errorMessage);
             rootView.removeView(databasesListView);
         }
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        String chosenDatabase =  (String) listAdapter.getItem(position);
-        listAdapter.getItem(position);
-        Intent intent = new Intent(getActivity(), TableActivity.class);
-        intent.putExtra("DatabaseName",chosenDatabase);
-        Static.databaseConnector.setDatabaseInUse(chosenDatabase);
-        startActivity(intent);
     }
 }

@@ -10,20 +10,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import info.nerull7.mysqlbrowser.db.FakeDatabaseConnector;
-import info.nerull7.mysqlbrowser.db.RealDatabaseConnector;
+import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
 
 /**
  * Created by nerull7 on 07.07.14.
  */
-public class LoginFragment extends Fragment implements View.OnClickListener {
+public class LoginFragment extends Fragment implements View.OnClickListener, AsyncDatabaseConnector.BooleanReturnListener {
     private EditText urlTextbox;
     private EditText loginTextbox;
     private EditText passwordTextbox; // TODO: Mega super epic security (RSA/AES maybe?)
 
-    public LoginFragment(){
+    AsyncDatabaseConnector asyncDatabaseConnector;
 
-    }
+    public LoginFragment(){}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,29 +39,41 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        checkLogin();
+        checkAsycnLogin();
     }
 
-    private void checkLogin(){
+    private void checkAsycnLogin(){
         String login, password, url;
         login = loginTextbox.getText().toString();
         password = passwordTextbox.getText().toString();
         url = urlTextbox.getText().toString();
-        if(RealDatabaseConnector.checkLogin(login, password, url)) {
-            Static.databaseConnector = new RealDatabaseConnector(login, password, url);
+        asyncDatabaseConnector = new AsyncDatabaseConnector(login, password, url);
+        asyncDatabaseConnector.setBooleanReturnListener(this);
+        asyncDatabaseConnector.checkLogin();
+    }
+
+    @Override
+    public void onBooleanReturn(boolean result) { //TODO: FIX that Strings
+        String login, password, url;
+        login = loginTextbox.getText().toString();
+        password = passwordTextbox.getText().toString();
+        url = urlTextbox.getText().toString();
+
+        if(result) {
+            Static.asyncDatabaseConnector = asyncDatabaseConnector;
             Intent intent = new Intent(getActivity(), DatabaseActivity.class);
             startActivity(intent);
         }
         else {
             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(RealDatabaseConnector.errorMsg);
+            builder.setMessage(Static.asyncDatabaseConnector.errorMsg);
             builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            // Nothing to do here
-                            // Cleaning inputs is stupid
-                        }
-                    });
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    // Nothing to do here
+                    // Cleaning inputs is stupid
+                }
+            });
             builder.setTitle(R.string.error);
             builder.setIcon(R.drawable.ic_action_warning);
             builder.create();

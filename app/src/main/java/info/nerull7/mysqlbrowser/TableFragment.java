@@ -17,10 +17,12 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
+
 /**
  * Created by nerull7 on 14.07.14.
  */
-public class TableFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class TableFragment extends Fragment implements AdapterView.OnItemClickListener, AsyncDatabaseConnector.ListReturnListener{
     private String databaseName;
     private ListView tablesList;
     private ListAdapter listAdapter;
@@ -33,12 +35,23 @@ public class TableFragment extends Fragment implements AdapterView.OnItemClickLi
         databaseName = getArguments().getString("DatabaseName");
         tablesList = (ListView) rootView.findViewById(R.id.tableList);
         this.rootView = (RelativeLayout) rootView;
-        setupList();
+        Static.asyncDatabaseConnector.setListReturnListener(this);
+        Static.asyncDatabaseConnector.getTables();
         return rootView;
     }
 
-    private void setupList(){
-        List<String> tables = Static.databaseConnector.getTables();
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        String choosenTable =  (String) listAdapter.getItem(position);
+        listAdapter.getItem(position);
+        Intent intent = new Intent(getActivity(), EntriesActivity.class);
+        intent.putExtra("DatabaseName",databaseName);
+        intent.putExtra("TableName",choosenTable);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onListReturn(List<String> tables) {
         if(tables != null) {
             listAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, tables);
             tablesList.setAdapter(listAdapter);
@@ -51,15 +64,5 @@ public class TableFragment extends Fragment implements AdapterView.OnItemClickLi
             rootView.addView(errorMessage);
             rootView.removeView(tablesList);
         }
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        String choosenTable =  (String) listAdapter.getItem(position);
-        listAdapter.getItem(position);
-        Intent intent = new Intent(getActivity(), EntriesActivity.class);
-        intent.putExtra("DatabaseName",databaseName);
-        intent.putExtra("TableName",choosenTable);
-        startActivity(intent);
     }
 }

@@ -49,7 +49,7 @@ public class AsyncDatabaseConnector {
         urlBuilder += "?u="+login;
         urlBuilder += "&p="+password;
         urlBuilder += "&a="+action;
-        Log.d("URLBuilder", urlBuilder);
+        Log.d("Async URLBuilder", urlBuilder);
         return urlBuilder;
     }
 
@@ -60,29 +60,31 @@ public class AsyncDatabaseConnector {
     private void getList(String urlQuery){
         Downloader downloader = new Downloader(new Downloader.OnFinishedListener() {
             @Override
-            public void onFinished(String data) {
+            public void onFinished(String data, String error) {
                 List<String>list = null;
                 try {
                     list = parseListFromJSON(data);
                 } catch (JSONException e) { e.printStackTrace(); }
                 if(listReturnListener!=null)
-                    listReturnListener.onReturn(list);
+                    listReturnListener.onListReturn(list);
             }
         });
+        downloader.execute(urlQuery);
     }
 
     private void getMatrix(String urlQuery){
         Downloader downloader = new Downloader(new Downloader.OnFinishedListener() {
             @Override
-            public void onFinished(String data) {
+            public void onFinished(String data, String error) {
                 List<List<String>> list = null;
                 try {
                     list = parseMatrixFromJSON(data);
                 } catch (JSONException e) { e.printStackTrace(); }
                 if(matrixReturnListener!=null)
-                    matrixReturnListener.onReturn(list);
+                    matrixReturnListener.onMatrixReturn(list);
             }
         });
+        downloader.execute(urlQuery);
     }
 
     private List<String> parseListFromJSON(String jsonListString) throws JSONException {
@@ -111,12 +113,23 @@ public class AsyncDatabaseConnector {
     public boolean checkLogin(){
         Downloader downloader = new Downloader(new Downloader.OnFinishedListener() {
             @Override
-            public void onFinished(String data) {
+            public void onFinished(String data, String error) {
                 List<String>list = null;
-                if(booleanReturnListener!=null)
-                    booleanReturnListener.onReturn(data.compareTo("OK")==0);
+                boolean listenerData;
+                if(data==null) {
+                    listenerData = false;
+                    errorMsg = error;
+                }
+                else if(booleanReturnListener!=null)
+                    listenerData = (data.compareTo("OK")==0);
+                else {
+                    errorMsg = data;
+                    listenerData = false;
+                }
+                booleanReturnListener.onBooleanReturn(listenerData);
             }
         });
+        downloader.execute(actionUrlBuilder("login"));
         return false;
     }
 
@@ -154,26 +167,28 @@ public class AsyncDatabaseConnector {
     }
 
     public static interface BooleanReturnListener{
-        public void onReturn(boolean result);
+        public void onBooleanReturn(boolean result);
     }
     
     public static interface StringReturnListener{
-        public void onReturn(String data);
+        public void onStringReturn(String data);
     }
 
     public static interface ListReturnListener {
-        public void onReturn(List<String> data);
+        public void onListReturn(List<String> data);
     }
 
     public static interface MatrixReturnListener{
-        public void onReturn(List<List<String>> data);
+        public void onMatrixReturn(List<List<String>> data);
     }
 
     private static class Downloader extends AsyncTask<String, Void, String> {
-        OnFinishedListener onFinishedListener;
+        private OnFinishedListener onFinishedListener;
+        private String errorString;
 
         Downloader(OnFinishedListener onFinishedListener){
             this.onFinishedListener = onFinishedListener;
+            errorString = null;
         }
 
         private String httpRequest(String urlRequest) throws IOException {
@@ -200,7 +215,7 @@ public class AsyncDatabaseConnector {
                 return response;
             }
             else {
-                errorMsg = "ERROR "+urlConnection.getResponseCode()+": "+urlConnection.getResponseMessage();
+                errorString = "ERROR "+urlConnection.getResponseCode()+": "+urlConnection.getResponseMessage();
                 return null;
             }
         }
@@ -234,11 +249,12 @@ public class AsyncDatabaseConnector {
 
         @Override
         protected void onPostExecute(String data) {
-            onFinishedListener.onFinished(data); // Can't be null cos we demand listener in constructor
+            onFinishedListener.onFinished(data, errorMsg); // Can't be null cos we demand listener in constructor
+            Log.d("onPostExecute:",data);
         }
 
         private static interface OnFinishedListener {
-            void onFinished(String data);
+            void onFinished(String data, String error);
         }
     }
 }
