@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
@@ -35,6 +36,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     private String tableName;
     private int entriesLimit;
     private int page;
+    private ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,6 +50,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         entriesLimit = getActivity().getSharedPreferences(SettingsFragment.PREFERENCE_FILE, Context.MODE_PRIVATE).getInt(SettingsFragment.ENTRIES_PAGE_LIMIT, SettingsFragment.ENTRIES_PAGE_LIMIT_DEF);
         this.rootView = (RelativeLayout) rootView;
         page = getArguments().getInt("Page");
+        progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
 //        setupActionBar();
 
         headerRow = new TableRow(getActivity());
@@ -90,6 +93,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
             headerFrame.addView(headerRow);
             headerRow.setVisibility(View.VISIBLE);
         }
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override

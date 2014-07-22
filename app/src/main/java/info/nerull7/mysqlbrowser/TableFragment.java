@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,6 +28,7 @@ public class TableFragment extends Fragment implements AdapterView.OnItemClickLi
     private ListView tablesList;
     private ListAdapter listAdapter;
     private RelativeLayout rootView;
+    private ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,6 +37,7 @@ public class TableFragment extends Fragment implements AdapterView.OnItemClickLi
         databaseName = getArguments().getString("DatabaseName");
         tablesList = (ListView) rootView.findViewById(R.id.tableList);
         this.rootView = (RelativeLayout) rootView;
+        progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
         Static.asyncDatabaseConnector.setListReturnListener(this);
         Static.asyncDatabaseConnector.getTables();
         return rootView;
@@ -64,5 +67,6 @@ public class TableFragment extends Fragment implements AdapterView.OnItemClickLi
             rootView.addView(errorMessage);
             rootView.removeView(tablesList);
         }
+        progressBar.setVisibility(View.INVISIBLE);
     }
 }

@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ public class DatabaseFragment extends Fragment implements AdapterView.OnItemClic
     private ListView databasesListView;
     private ListAdapter listAdapter;
     private RelativeLayout rootView;
+    private ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -32,6 +34,7 @@ public class DatabaseFragment extends Fragment implements AdapterView.OnItemClic
         View rootView = inflater.inflate(R.layout.fragment_database, container, false);
         databasesListView = (ListView) rootView.findViewById(R.id.databaseList);
         this.rootView = (RelativeLayout) rootView;
+        progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
 
         Static.asyncDatabaseConnector.setListReturnListener(this);
         Static.asyncDatabaseConnector.getDatabases();
@@ -62,5 +65,6 @@ public class DatabaseFragment extends Fragment implements AdapterView.OnItemClic
             rootView.addView(errorMessage);
             rootView.removeView(databasesListView);
         }
+        progressBar.setVisibility(View.INVISIBLE);
     }
 }

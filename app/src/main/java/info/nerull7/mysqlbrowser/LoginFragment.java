@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
 
@@ -19,6 +20,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
     private EditText urlTextbox;
     private EditText loginTextbox;
     private EditText passwordTextbox; // TODO: Mega super epic security (RSA/AES maybe?)
+    private ProgressBar progressBar;
 
     AsyncDatabaseConnector asyncDatabaseConnector;
 
@@ -30,15 +32,17 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
         rootView.findViewById(R.id.buttonLogin).setOnClickListener(this);
 
-        this.urlTextbox = (EditText) rootView.findViewById(R.id.editURL);
-        this.loginTextbox = (EditText) rootView.findViewById(R.id.editLogin);
-        this.passwordTextbox = (EditText) rootView.findViewById(R.id.editPassowrd);
+        urlTextbox = (EditText) rootView.findViewById(R.id.editURL);
+        loginTextbox = (EditText) rootView.findViewById(R.id.editLogin);
+        passwordTextbox = (EditText) rootView.findViewById(R.id.editPassowrd);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
 
         return rootView;
     }
 
     @Override
     public void onClick(View view) {
+        progressBar.setVisibility(View.VISIBLE);
         checkAsycnLogin();
     }
 
@@ -79,5 +83,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
             builder.create();
             builder.show();
         }
+        progressBar.setVisibility(View.INVISIBLE);
     }
 }
