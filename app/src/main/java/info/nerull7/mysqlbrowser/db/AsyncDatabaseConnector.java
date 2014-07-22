@@ -249,8 +249,7 @@ public class AsyncDatabaseConnector {
 
         @Override
         protected void onPostExecute(String data) {
-            onFinishedListener.onFinished(data, errorMsg); // Can't be null cos we demand listener in constructor
-            Log.d("onPostExecute:",data);
+            onFinishedListener.onFinished(data, errorString); // Can't be null cos we demand listener in constructor
         }
 
         private static interface OnFinishedListener {
