@@ -45,14 +45,23 @@ public class RealDatabaseConnector implements DatabaseConnector {
     private static String httpRequest(String urlRequest) throws IOException {
         disableStrictMode(); // FIXME
         URL url = new URL(urlRequest);
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();  // TODO Handling no connection
         InputStream inputStream = null;
         String response;
+
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();  // TODO Handling no connection
+        urlConnection.setReadTimeout(10000 /* miliseconds FIXME*/);
+        urlConnection.setConnectTimeout(15000 /* miliseconds FIXME */);
+        urlConnection.setRequestMethod("GET");
+        urlConnection.setDoInput(true); // TODO what it does?
+        urlConnection.connect();
+
         if(urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             try {
-                inputStream = new BufferedInputStream(urlConnection.getInputStream());
+                inputStream = urlConnection.getInputStream();
                 response = readStream(inputStream);
             } finally {
+                if(inputStream!=null)
+                    inputStream.close();
                 urlConnection.disconnect();
             }
             return response;
@@ -63,7 +72,7 @@ public class RealDatabaseConnector implements DatabaseConnector {
         }
     }
 
-    private static String readStream(InputStream in) {
+    private static String readStream(InputStream in) throws IOException {
         String streamOutput = "";
         BufferedReader reader = null;
         try {
@@ -72,15 +81,9 @@ public class RealDatabaseConnector implements DatabaseConnector {
             while ((line = reader.readLine()) != null) {
                 streamOutput += line;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         } finally {
             if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                reader.close();
             }
         }
         return streamOutput;
