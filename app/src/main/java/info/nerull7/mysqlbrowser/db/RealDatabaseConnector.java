@@ -58,7 +58,7 @@ public class RealDatabaseConnector implements DatabaseConnector {
             return response;
         }
         else {
-            errorMsg = "ERROR: "+urlConnection.getResponseCode();
+            errorMsg = "ERROR "+urlConnection.getResponseCode()+": "+urlConnection.getResponseMessage();
             return null;
         }
     }
