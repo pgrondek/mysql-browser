@@ -11,7 +11,7 @@ public class TableActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_table);
-        setTitle(getIntent().getStringExtra("DatabaseName"));
+        setTitle(getIntent().getStringExtra(Static.DATABASE_NAME_ARG));
 
         TableFragment tableFragment = new TableFragment();
         tableFragment.setArguments(getIntent().getExtras());

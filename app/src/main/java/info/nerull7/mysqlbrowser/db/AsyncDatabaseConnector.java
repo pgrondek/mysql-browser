@@ -19,12 +19,17 @@ import java.util.List;
  * Created by nerull7 on 07.07.14.
  */
 public class AsyncDatabaseConnector {
+    public static final String ACTION_LOGIN = "login";
+    public static final String ACTION_DATABASE_LIST = "dblist";
+    public static final String ACTION_TABLE_LIST = "tablelist";
+    public static final String ACTION_FIELD_LIST = "fieldlist";
+    public static final String ACTION_DATA_MATRIX = "getrows";
+
     private String login;
     private String password;
     private String url;
 
     private String database;
-    private String table;
 
     private BooleanReturnListener booleanReturnListener;
     private StringReturnListener stringReturnListener;
@@ -44,12 +49,12 @@ public class AsyncDatabaseConnector {
         matrixReturnListener=null;
     }
 
-    private String actionUrlBuilder(String action){
+    private String actionUrlBuilder(String action){ // TODO Better UrlBuilder this is shit only for use
         String urlBuilder = url;
         urlBuilder += "?u="+login;
         urlBuilder += "&p="+password;
         urlBuilder += "&a="+action;
-        Log.d("Async URLBuilder", urlBuilder);
+//        Log.d("URLBuilder", urlBuilder);
         return urlBuilder;
     }
 
@@ -129,25 +134,25 @@ public class AsyncDatabaseConnector {
                 booleanReturnListener.onBooleanReturn(listenerData);
             }
         });
-        downloader.execute(actionUrlBuilder("login"));
+        downloader.execute(actionUrlBuilder(ACTION_LOGIN));
         return false;
     }
 
     public void getDatabases(){
-        getList(actionUrlBuilder("dblist")); // TODO Redefine as public static final
+        getList(actionUrlBuilder(ACTION_DATABASE_LIST));
     }
 
     public void getTables(){
-        getList(actionUrlBuilder("tablelist")+"&d="+database); // TODO Redefine as public static final
+        getList(actionUrlBuilder(ACTION_TABLE_LIST)+"&d="+database);
     }
 
     public void getFields(String table){
-        getList(actionUrlBuilder("fieldlist")+"&d="+database+"&t="+table); // TODO Redefine as public static final
+        getList(actionUrlBuilder(ACTION_FIELD_LIST)+"&d="+database+"&t="+table);
     }
 
     public void getRows(String table, int count, int page){
         int limitStart = page * count;
-        getMatrix(actionUrlBuilder("getrows")+"&d="+database+"&t="+table+"&s="+limitStart+"&l="+count); //FIXME
+        getMatrix(actionUrlBuilder(ACTION_DATA_MATRIX)+"&d="+database+"&t="+table+"&s="+limitStart+"&l="+count);
     }
 
     public void setBooleanReturnListener(BooleanReturnListener booleanReturnListener){
@@ -186,6 +191,10 @@ public class AsyncDatabaseConnector {
         private OnFinishedListener onFinishedListener;
         private String errorString;
 
+        public static final String CONNECTION_REQUEST_METHOD = "GET";
+        public static final int CONNECTION_TIMEOUT = 15000;
+        public static final int READ_TIMEOUT = 10000;
+
         Downloader(OnFinishedListener onFinishedListener){
             this.onFinishedListener = onFinishedListener;
             errorString = null;
@@ -197,10 +206,9 @@ public class AsyncDatabaseConnector {
             String response;
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();  // TODO Handling no connection
-            urlConnection.setReadTimeout(10000 /* miliseconds FIXME*/);
-            urlConnection.setConnectTimeout(15000 /* miliseconds FIXME */);
-            urlConnection.setRequestMethod("GET");
-            urlConnection.setDoInput(true); // TODO what it does?
+            urlConnection.setReadTimeout(READ_TIMEOUT);
+            urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
+            urlConnection.setRequestMethod(CONNECTION_REQUEST_METHOD);
             urlConnection.connect();
 
             if(urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {

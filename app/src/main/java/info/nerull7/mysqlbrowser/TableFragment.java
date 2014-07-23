@@ -34,7 +34,7 @@ public class TableFragment extends Fragment implements AdapterView.OnItemClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_table, container, false);
-        databaseName = getArguments().getString("DatabaseName");
+        databaseName = getArguments().getString(Static.DATABASE_NAME_ARG);
         tablesList = (ListView) rootView.findViewById(R.id.tableList);
         this.rootView = (RelativeLayout) rootView;
         progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
@@ -45,11 +45,11 @@ public class TableFragment extends Fragment implements AdapterView.OnItemClickLi
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        String choosenTable =  (String) listAdapter.getItem(position);
+        String chosenTable =  (String) listAdapter.getItem(position);
         listAdapter.getItem(position);
         Intent intent = new Intent(getActivity(), EntriesActivity.class);
-        intent.putExtra("DatabaseName",databaseName);
-        intent.putExtra("TableName",choosenTable);
+        intent.putExtra(Static.DATABASE_NAME_ARG,databaseName);
+        intent.putExtra(Static.TABLE_NAME_ARG,chosenTable);
         startActivity(intent);
     }
 

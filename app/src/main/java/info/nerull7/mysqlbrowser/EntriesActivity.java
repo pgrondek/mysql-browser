@@ -15,8 +15,9 @@ public class EntriesActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entries);
         Bundle bundle = getIntent().getExtras();
-        bundle.putInt("Page", 0);
-        String titleName = bundle.getString("DatabaseName")+"->"+bundle.getString("TableName");
+        bundle.putInt(Static.PAGE_ARG, 0);
+//        String titleName = bundle.getString(Static.DATABASE_NAME_ARG)+"->"+bundle.getString(Static.TABLE_NAME_ARG);
+        String titleName = bundle.getString(Static.TABLE_NAME_ARG);
         setTitle(titleName);
 
         EntriesFragment entriesFragment = new EntriesFragment();
@@ -29,12 +30,11 @@ public class EntriesActivity extends Activity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) { // TODO Implement pages
         switch (item.getItemId()){
             case R.id.action_previous:
             case R.id.action_next:
-//                item.setEnabled(!item.isEnabled());
-//                item.setVisible(!item.isVisible());
+
                 break;
         }
         return super.onOptionsItemSelected(item);

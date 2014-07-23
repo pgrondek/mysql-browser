@@ -19,7 +19,6 @@ public class SettingsFragment extends PreferenceFragment implements NumberPicker
     public static final int ENTRIES_MIN_PAGE = 20;
     public static final int ENTRIES_MAX_PAGE = 100;
 
-    private Activity parent;
     private SharedPreferences preferences;
     private Preference mEntriesLimit;
 

@@ -43,10 +43,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
     @Override
     public void onClick(View view) {
         progressBar.setVisibility(View.VISIBLE);
-        checkAsycnLogin();
+        checkLogin();
     }
 
-    private void checkAsycnLogin(){
+    private void checkLogin(){
         String login, password, url;
         login = loginTextbox.getText().toString();
         password = passwordTextbox.getText().toString();

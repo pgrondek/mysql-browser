@@ -7,6 +7,8 @@ import android.preference.PreferenceActivity;
 
 /**
  * Created by nerull7 on 18.07.14.
+ *
+ * Simple activity for SettingsFragment
  */
 public class SettingsActivity extends PreferenceActivity {
 

@@ -42,14 +42,14 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_entries, container, false);
-        databaseName = getArguments().getString("DatabaseName");
-        tableName = getArguments().getString("TableName");
+        databaseName = getArguments().getString(Static.DATABASE_NAME_ARG);
+        tableName = getArguments().getString(Static.TABLE_NAME_ARG);
         entriesTable = (TableLayout) rootView.findViewById(R.id.entriesTable);
         entriesScrollView = (ScrollView) rootView.findViewById(R.id.entriesScrollView);
         headerFrame = (FrameLayout) rootView.findViewById(R.id.headerFrame);
         entriesLimit = getActivity().getSharedPreferences(SettingsFragment.PREFERENCE_FILE, Context.MODE_PRIVATE).getInt(SettingsFragment.ENTRIES_PAGE_LIMIT, SettingsFragment.ENTRIES_PAGE_LIMIT_DEF);
         this.rootView = (RelativeLayout) rootView;
-        page = getArguments().getInt("Page");
+        page = getArguments().getInt(Static.PAGE_ARG);
         progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
 //        setupActionBar();
 

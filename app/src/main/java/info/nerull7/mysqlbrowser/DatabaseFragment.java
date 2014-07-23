@@ -21,6 +21,8 @@ import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
 
 /**
  * Created by nerull7 on 14.07.14.
+ *
+ * Fragment for showing list of Available Databases for user
  */
 public class DatabaseFragment extends Fragment implements AdapterView.OnItemClickListener, AsyncDatabaseConnector.ListReturnListener {
     private ListView databasesListView;
