@@ -16,6 +16,19 @@
         android:layout_alignParentTop="false"
         android:layout_marginTop="-7dp" />
 
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/loginProgressBar"
+        android:layout_alignParentRight="true"
+        android:foregroundGravity="right"
+        android:id="@+id/fakeScroll">
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dummyView"/>
+    </ScrollView>
+
     <HorizontalScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -46,18 +59,5 @@
             </info.nerull7.mysqlbrowser.CustomScrollView>
         </RelativeLayout>
     </HorizontalScrollView>
-
-    <ScrollView
-        android:layout_width="@dimen/activity_horizontal_margin"
-        android:layout_height="fill_parent"
-        android:layout_below="@+id/loginProgressBar"
-        android:layout_alignParentRight="true"
-        android:foregroundGravity="right"
-        android:id="@+id/fakeScroll">
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/dummyView"/>
-    </ScrollView>
 
 </RelativeLayout>
