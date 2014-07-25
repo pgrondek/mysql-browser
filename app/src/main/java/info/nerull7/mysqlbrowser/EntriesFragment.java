@@ -26,7 +26,7 @@ import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
  */
 public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.MatrixReturnListener, AsyncDatabaseConnector.ListReturnListener{
     private TableLayout entriesTable;
-    private ScrollView entriesScrollView;
+    private CustomScrollView entriesScrollView;
     private FrameLayout headerFrame;
     private RelativeLayout rootView;
     private TableRow.LayoutParams layoutParams;
@@ -37,31 +37,56 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     private int entriesLimit;
     private int page;
     private ProgressBar progressBar;
+    private ScrollView fakeScrollView;
+    private View dummyView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_entries, container, false);
-        databaseName = getArguments().getString(Static.DATABASE_NAME_ARG);
-        tableName = getArguments().getString(Static.TABLE_NAME_ARG);
-        entriesTable = (TableLayout) rootView.findViewById(R.id.entriesTable);
-        entriesScrollView = (ScrollView) rootView.findViewById(R.id.entriesScrollView);
-        headerFrame = (FrameLayout) rootView.findViewById(R.id.headerFrame);
-        entriesLimit = getActivity().getSharedPreferences(SettingsFragment.PREFERENCE_FILE, Context.MODE_PRIVATE).getInt(SettingsFragment.ENTRIES_PAGE_LIMIT, SettingsFragment.ENTRIES_PAGE_LIMIT_DEF);
-        this.rootView = (RelativeLayout) rootView;
-        page = getArguments().getInt(Static.PAGE_ARG);
-        progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
+
+        initArguments();
+        initViewItems(rootView);
 //        setupActionBar();
 
-        headerRow = new TableRow(getActivity());
-        layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
-
         Static.asyncDatabaseConnector.setListReturnListener(this);
+        Static.asyncDatabaseConnector.setMatrixReturnListener(this);
         Static.asyncDatabaseConnector.getFields(tableName);
 
         return rootView;
     }
 
+    private void initArguments(){
+        databaseName = getArguments().getString(Static.DATABASE_NAME_ARG);
+        tableName = getArguments().getString(Static.TABLE_NAME_ARG);
+        page = getArguments().getInt(Static.PAGE_ARG);
+
+        entriesLimit = getActivity().getSharedPreferences(SettingsFragment.PREFERENCE_FILE, Context.MODE_PRIVATE).getInt(SettingsFragment.ENTRIES_PAGE_LIMIT, SettingsFragment.ENTRIES_PAGE_LIMIT_DEF);
+    }
+
+    private void initViewItems(View rootView){
+        headerFrame = (FrameLayout) rootView.findViewById(R.id.headerFrame);
+        entriesTable = (TableLayout) rootView.findViewById(R.id.entriesTable);
+        entriesScrollView = (CustomScrollView) rootView.findViewById(R.id.entriesScrollView);
+        fakeScrollView = (ScrollView) rootView.findViewById(R.id.fakeScroll);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
+        dummyView = rootView.findViewById(R.id.dummyView);
+
+        this.rootView = (RelativeLayout) rootView;
+
+        entriesScrollView.setOnScrollChangedListener(new CustomScrollView.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged(int l, int t, int oldl, int oldt) {
+                fakeScrollView.scrollTo(0,t);
+            }
+        });
+
+        layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+        headerFrame.setVisibility(View.INVISIBLE);
+        entriesTable.setVisibility(View.INVISIBLE);
+    }
+
+    // TODO Handling ActionBar
 //    private void setupActionBar() {
 //        ActionBar actionBar = getActivity().getActionBar();
 //        actionBar.
@@ -82,7 +107,6 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
                 }
                 entriesTable.addView(newRow);
             }
-            entriesTable.addView(headerRow);
         } else {
             TextView errorMessage = new TextView(getActivity());
             errorMessage.setText(R.string.error_no_entries);
@@ -90,15 +114,17 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
             errorMessage.setClickable(false);
             entriesScrollView.removeView(entriesTable);
             rootView.addView(errorMessage);
-            headerFrame.addView(headerRow);
-            headerRow.setVisibility(View.VISIBLE);
         }
+        syncWidths(); // please don't crash
+        fakeScroll();
+
         progressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
-    public void onListReturn(List<String> fieldList) { // TODO: Fix bug not showing header
+    public void onListReturn(List<String> fieldList) {
         // First we need header
+        headerRow = new TableRow(getActivity());
         headerRow.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
         for(int i =0;i<fieldList.size();i++){
             TextView textView = new TextView(getActivity());
@@ -107,28 +133,50 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
             textView.setLayoutParams(layoutParams);
             headerRow.addView(textView);
         }
-        headerRow.setVisibility(View.INVISIBLE);
+        headerFrame.addView(headerRow);
 
-        View fakeHeaderView = new View(getActivity()){
-            @Override
-            public void draw(Canvas canvas) {
-                headerRow.draw(canvas);
-            }
-
-            @Override
-            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                int width = headerRow.getMeasuredWidth();
-                int height = headerRow.getMeasuredHeight();
-
-                widthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
-                heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
-
-                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            }
-        };
-        headerFrame.addView(fakeHeaderView);
-
-        Static.asyncDatabaseConnector.setMatrixReturnListener(this);
         Static.asyncDatabaseConnector.getRows(tableName, entriesLimit, page);
     }
+
+    private void syncWidths(){ // TODO: Merge with adding columns maybe? Loops -= 3 should be quicker
+        TableRow headerRow = (TableRow) headerFrame.getChildAt(0);
+        int maxWidth[]= new int[headerRow.getChildCount()];
+        for(int i=0;i<headerRow.getChildCount();i++){
+            TextView textView = (TextView) headerRow.getChildAt(i);
+            textView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            maxWidth[i] = textView.getMeasuredWidth();
+        }
+
+        for(int i=0;i<entriesTable.getChildCount();i++){
+            TableRow tableRow = (TableRow) entriesTable.getChildAt(i);
+            for(int j=0;j<tableRow.getChildCount();j++){
+                TextView textView = (TextView) tableRow.getChildAt(j);
+                textView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+                int width = textView.getMeasuredWidth();
+                if(width>maxWidth[j])
+                    maxWidth[j]=width;
+            }
+        }
+
+        for(int i=0;i<headerRow.getChildCount();i++){
+            TableRow entriesRow = (TableRow) entriesTable.getChildAt(0);
+
+            TextView tmpEntries = (TextView) entriesRow.getChildAt(i);
+            TextView tmpHeader = (TextView) headerRow.getChildAt(i);
+
+            tmpEntries.setWidth(maxWidth[i]);
+            tmpHeader.setWidth(maxWidth[i]);
+        }
+
+        headerFrame.setVisibility(View.VISIBLE);
+        entriesTable.setVisibility(View.VISIBLE);
+    }
+
+    private void fakeScroll(){
+        entriesScrollView.measure(View.MeasureSpec.UNSPECIFIED,View.MeasureSpec.UNSPECIFIED);
+        int height = entriesScrollView.getMeasuredHeight();
+        dummyView.setMinimumHeight(height);
+    }
+
+
 }

@@ -4,6 +4,8 @@
     android:layout_height="match_parent"
     tools:context="info.nerull7.mysqlbrowser.EntriesFragment">
 
+
+
     <ProgressBar
         style="?android:attr/progressBarStyleHorizontal"
         android:indeterminate="true"
@@ -14,29 +16,48 @@
         android:layout_alignParentTop="false"
         android:layout_marginTop="-7dp" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/headerFrame"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"></FrameLayout>
+        android:id="@+id/horizontalScrollView" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/container">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/headerFrame"
+                android:paddingTop="@dimen/activity_vertical_margin"></FrameLayout>
+
+            <info.nerull7.mysqlbrowser.CustomScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/entriesScrollView"
+                android:layout_below="@+id/headerFrame"
+                android:scrollbars="none">
+                <TableLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/entriesTable">
+                </TableLayout>
+            </info.nerull7.mysqlbrowser.CustomScrollView>
+        </RelativeLayout>
+    </HorizontalScrollView>
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/entriesScrollView"
-        android:layout_below="@+id/headerFrame"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin">
-        <TableLayout
+        android:layout_width="@dimen/activity_horizontal_margin"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/loginProgressBar"
+        android:layout_alignParentRight="true"
+        android:foregroundGravity="right"
+        android:id="@+id/fakeScroll">
+        <View
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/entriesTable">
-        </TableLayout>
+            android:id="@+id/dummyView"/>
     </ScrollView>
 
 </RelativeLayout>
