@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
@@ -25,6 +26,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
     private EditText loginTextbox;
     private EditText passwordTextbox; // TODO: Mega super epic security (RSA/AES maybe?)
     private ProgressBar progressBar;
+    private Button loginButton;
 
     AsyncDatabaseConnector asyncDatabaseConnector;
 
@@ -34,12 +36,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
-        rootView.findViewById(R.id.buttonLogin).setOnClickListener(this);
 
+        loginButton = (Button) rootView.findViewById(R.id.buttonLogin);
         urlTextbox = (EditText) rootView.findViewById(R.id.editURL);
         loginTextbox = (EditText) rootView.findViewById(R.id.editLogin);
         passwordTextbox = (EditText) rootView.findViewById(R.id.editPassowrd);
         progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
+
+        loginButton.setOnClickListener(this);
         processCredentials();
 
         return rootView;
@@ -58,6 +62,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
     @Override
     public void onClick(View view) {
         progressBar.setVisibility(View.VISIBLE);
+        loginButton.setEnabled(false); // Blocks multiple clicks
         checkLogin();
     }
 
@@ -93,6 +98,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
             builder.create();
             builder.show();
         }
+        loginButton.setEnabled(true); // Now we can click button again
         progressBar.setVisibility(View.INVISIBLE);
     }
 }
