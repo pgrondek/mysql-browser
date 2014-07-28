@@ -72,12 +72,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
     }
 
     @Override
-    public void onBooleanReturn(boolean result) { //TODO: FIX that Strings
-        String login, password, url;
-        login = loginTextbox.getText().toString();
-        password = passwordTextbox.getText().toString();
-        url = urlTextbox.getText().toString();
-
+    public void onBooleanReturn(boolean result) {
         if(result) {
             Static.asyncDatabaseConnector = asyncDatabaseConnector;
             Intent intent = new Intent(getActivity(), DatabaseActivity.class);
