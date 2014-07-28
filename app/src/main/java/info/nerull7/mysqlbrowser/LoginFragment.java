@@ -9,12 +9,20 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
 
@@ -56,7 +64,19 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
             urlTextbox.setText(sharedPreferences.getString(SettingsFragment.URL_CREDENTIALS, null));
             loginTextbox.setText(sharedPreferences.getString(SettingsFragment.LOGIN_CREDENTIALS, null));
             passwordTextbox.setText(sharedPreferences.getString(SettingsFragment.PASSWORD_CREDENTIALS, null));
+            test(urlTextbox.getText().toString());
         }
+    }
+
+    private void test(String text){ //FIXME Remove Me!!!
+        String tmp;
+        byte [] tmp_byte;
+        try {
+            tmp_byte = Crypto.encrypt(text);
+            Log.d("Crypto", "encrypted: " + tmp_byte);
+            tmp = Crypto.decrypt(tmp_byte);
+            Log.d("Crypto", "decrypted: " + tmp);
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     @Override
