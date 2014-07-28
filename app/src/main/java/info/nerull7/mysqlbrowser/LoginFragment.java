@@ -2,9 +2,13 @@ package info.nerull7.mysqlbrowser;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,8 +40,19 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
         loginTextbox = (EditText) rootView.findViewById(R.id.editLogin);
         passwordTextbox = (EditText) rootView.findViewById(R.id.editPassowrd);
         progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
+        processCredentials();
 
         return rootView;
+    }
+
+    private void processCredentials() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        if(sharedPreferences.getBoolean(SettingsFragment.SAVE_SERVER_CREDENTIALS, false)){
+            urlTextbox.setText(sharedPreferences.getString(SettingsFragment.URL_CREDENTIALS, null));
+            loginTextbox.setText(sharedPreferences.getString(SettingsFragment.LOGIN_CREDENTIALS, null));
+            passwordTextbox.setText(sharedPreferences.getString(SettingsFragment.PASSWORD_CREDENTIALS, null));
+        }
     }
 
     @Override

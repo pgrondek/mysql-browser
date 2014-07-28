@@ -9,5 +9,29 @@
             android:summary="@string/entries_summary"
             />
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/login_settings">
+
+        <CheckBoxPreference
+            android:key="save_credentials_enabled"
+            android:title="@string/save_credentials"/>
+
+        <EditTextPreference
+            android:key="url"
+            android:title="@string/connector_url"
+            android:inputType="textUri"
+            android:dependency="save_credentials_enabled"/>
+
+        <EditTextPreference
+            android:key="login"
+            android:title="@string/username"
+            android:dependency="save_credentials_enabled"/>
+
+        <EditTextPreference
+            android:key="password"
+            android:title="@string/password"
+            android:password="true"
+            android:dependency="save_credentials_enabled"/>
+    </PreferenceCategory>
 
 </PreferenceScreen>

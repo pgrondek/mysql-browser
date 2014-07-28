@@ -27,5 +27,8 @@
     <string name="error_no_databases">No available databases</string>
     <string name="action_previous">Previous</string>
     <string name="action_next">Next</string>
+    <string name="login_settings">Login credentials</string>
+    <string name="save_credentials">Save credentials</string>
+    <string name="connector_url">Connector URL</string>
 
 </resources>

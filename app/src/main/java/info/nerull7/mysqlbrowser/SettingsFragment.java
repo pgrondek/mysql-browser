@@ -1,9 +1,9 @@
 package info.nerull7.mysqlbrowser;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
@@ -11,9 +11,12 @@ import android.preference.PreferenceScreen;
 /**
  * Created by nerull7 on 18.07.14.
  */
-public class SettingsFragment extends PreferenceFragment implements NumberPickerDialog.OnNumberSetListener {
-    public static final String PREFERENCE_FILE = "preferences";
+public class SettingsFragment extends PreferenceFragment implements NumberPickerDialog.OnNumberSetListener, Preference.OnPreferenceClickListener {
     public static final String ENTRIES_PAGE_LIMIT = "entries_limit";
+    public static final String SAVE_SERVER_CREDENTIALS = "save_credentials_enabled";
+    public static final String URL_CREDENTIALS = "url";
+    public static final String LOGIN_CREDENTIALS = "login";
+    public static final String PASSWORD_CREDENTIALS = "password";
 
     public static final int ENTRIES_PAGE_LIMIT_DEF = 20;
     public static final int ENTRIES_MIN_PAGE = 20;
@@ -21,19 +24,57 @@ public class SettingsFragment extends PreferenceFragment implements NumberPicker
 
     private SharedPreferences preferences;
     private Preference mEntriesLimit;
+    private CheckBoxPreference saveCredentials;
+    private EditTextPreference connectorUrlCredentials;
+    private EditTextPreference loginCredentials;
+    private EditTextPreference passwordCredentials;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        preferences = getActivity().getSharedPreferences(PREFERENCE_FILE, Context.MODE_PRIVATE);
+        preferences = getPreferenceManager().getDefaultSharedPreferences(getActivity());
+
         loadPrefs();
     }
 
     private void loadPrefs(){
         addPreferencesFromResource(R.xml.settings);
 
+        // Getting fields
         mEntriesLimit = findPreference(ENTRIES_PAGE_LIMIT);
+        saveCredentials = (CheckBoxPreference) findPreference(SAVE_SERVER_CREDENTIALS);
+        connectorUrlCredentials = (EditTextPreference) findPreference(URL_CREDENTIALS);
+        loginCredentials = (EditTextPreference) findPreference(LOGIN_CREDENTIALS);
+        passwordCredentials = (EditTextPreference) findPreference(PASSWORD_CREDENTIALS); // TODO: Some encryption
+
+        // Settings fields
         setEntriesPageLimitSummary();
+
+        // Settings Listener
+        saveCredentials.setOnPreferenceClickListener(this);
+    }
+
+    private void setSaveServerCredentials(boolean isEnabled){
+        SharedPreferences.Editor editor = preferences.edit();
+
+        if(!isEnabled){ // Cleaning Credentials
+            editor.remove(URL_CREDENTIALS);
+            editor.remove(LOGIN_CREDENTIALS);
+            editor.remove(PASSWORD_CREDENTIALS);
+        }
+        editor.putBoolean(SAVE_SERVER_CREDENTIALS, isEnabled);
+        editor.apply();
+        editor.commit();
+
+        if(!isEnabled)
+            reloadLoginPrefsView();
+    }
+
+    private void reloadLoginPrefsView(){ // Update values
+        saveCredentials.setChecked(preferences.getBoolean(SAVE_SERVER_CREDENTIALS, false));
+        connectorUrlCredentials.setText(preferences.getString(URL_CREDENTIALS, null));
+        loginCredentials.setText(preferences.getString(LOGIN_CREDENTIALS, null));
+        passwordCredentials.setText(preferences.getString(PASSWORD_CREDENTIALS, null));;
     }
 
     private int getEntriesPageLimit(){
@@ -59,5 +100,16 @@ public class SettingsFragment extends PreferenceFragment implements NumberPicker
         editor.putInt(ENTRIES_PAGE_LIMIT, number);
         editor.apply();
         setEntriesPageLimitSummary();
+    }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        if(preference==saveCredentials){
+            setSaveServerCredentials(saveCredentials.isChecked());
+        }
+        else
+            return false;
+
+        return true;
     }
 }
