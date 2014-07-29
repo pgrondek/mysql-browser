@@ -32,7 +32,7 @@ import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
 public class LoginFragment extends Fragment implements View.OnClickListener, AsyncDatabaseConnector.BooleanReturnListener {
     private EditText urlTextbox;
     private EditText loginTextbox;
-    private EditText passwordTextbox; // TODO: Mega super epic security (RSA/AES maybe?)
+    private EditText passwordTextbox;
     private ProgressBar progressBar;
     private Button loginButton;
 
