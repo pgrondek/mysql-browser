@@ -70,18 +70,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
                     passwordTextbox.setText(crypto.decryptBase64(password));
                 } catch (Exception e) { e.printStackTrace(); }
             }
-//            test(urlTextbox.getText().toString());
         }
-    }
-
-    private void test(String text){ //FIXME Remove Me!!!
-        String tmp;
-        byte [] tmp_byte;
-        try {
-            Crypto crypto = new Crypto(getActivity());
-            tmp_byte = crypto.encrypt(text);
-            crypto.decrypt(tmp_byte);
-        } catch (Exception e) { e.printStackTrace(); }
     }
 
     @Override
