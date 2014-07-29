@@ -1,11 +1,22 @@
 package info.nerull7.mysqlbrowser;
 
+import android.content.Context;
+import android.util.Base64;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.KeySpec;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -13,57 +24,83 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.PBEKeySpec;
 
 /**
  * Created by nerull7 on 28.07.14.
  */
 public class Crypto {
     private static final String KEY_FILE = "null_file"; // to trick h4x0r5
+//    private static final String ENCRYPTION_ALGORITHM = "AES/CBC/PKCS5Padding"; // doesn't work TODO: Maybe fix?
     private static final String ENCRYPTION_ALGORITHM = "AES";
+    private static final String KEY_ALGORITHM = "AES";
     private static final int OUTPUT_KEY_LENGTH = 256;
 
-    private static SecretKey secretKey;
+    private SecretKey secretKey;
+    private Context context;
 
-    private static SecretKey generateKey() throws NoSuchAlgorithmException {
+    public Crypto(Context context){
+        this.context = context;
+
+        try {
+            getSecretKey();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private SecretKey generateKey() throws NoSuchAlgorithmException {
         SecureRandom secureRandom = new SecureRandom();
 
-        KeyGenerator keyGenerator = KeyGenerator.getInstance(ENCRYPTION_ALGORITHM);
+        KeyGenerator keyGenerator = KeyGenerator.getInstance(KEY_ALGORITHM);
         keyGenerator.init(OUTPUT_KEY_LENGTH, secureRandom);
         SecretKey secretKey = keyGenerator.generateKey();
 
         return secretKey;
     }
 
-    private static SecretKey getSecretKey() throws NoSuchAlgorithmException {
-        if(secretKey==null)
-            secretKey = generateKey();
+    private void getSecretKey() throws NoSuchAlgorithmException, IOException, ClassNotFoundException {
+        String key;
 
-        Log.d("SecureKEY", "Hash:" + secretKey.hashCode());
-        return secretKey;
+        // First try to open file
+        File keyFile = new File(context.getFilesDir(), KEY_FILE);
+        if(!keyFile.exists()) { // new key
+            secretKey = generateKey();
+            FileOutputStream fileOutputStream =  new FileOutputStream(keyFile);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(secretKey);
+            objectOutputStream.close();
+            fileOutputStream.close();
+        } else { // read existing key from file
+            FileInputStream fileInputStream = new FileInputStream(keyFile);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            secretKey = (SecretKey) objectInputStream.readObject();
+            objectInputStream.close();
+            fileInputStream.close();
+        }
     }
 
-    public static byte[] encrypt(String input) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+    public byte[] encrypt(String input) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         byte[] output;
         Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
-        cipher.init(Cipher.ENCRYPT_MODE, getSecretKey());
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
         output = cipher.doFinal(input.getBytes(Charset.defaultCharset()));
 
         return output;
     }
 
-    public static String decrypt(byte[] input) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+    public String decrypt(byte[] input) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         String output;
-        byte [] tmp; // TODO: REMOVE
-
         Cipher cipher = Cipher.getInstance(ENCRYPTION_ALGORITHM);
-        cipher.init(Cipher.DECRYPT_MODE, getSecretKey());
-//        output = String.valueOf(cipher.doFinal(input));
-        tmp = cipher.doFinal(input);
-
-//        output = tmp.toString();
-        output = new String(input, Charset.defaultCharset());
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        output = new String(cipher.doFinal(input), Charset.defaultCharset());
 
         return output;
     }
 
+    public String decryptBase64(String encodedString) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        byte [] encryptedString = Base64.decode(encodedString, Base64.DEFAULT);
+        String decrypted = decrypt(encryptedString);
+        return decrypted;
+    }
 }

@@ -7,11 +7,19 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
+import android.util.Base64;
+
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 /**
  * Created by nerull7 on 18.07.14.
  */
-public class SettingsFragment extends PreferenceFragment implements NumberPickerDialog.OnNumberSetListener, Preference.OnPreferenceClickListener {
+public class SettingsFragment extends PreferenceFragment implements NumberPickerDialog.OnNumberSetListener, Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
     public static final String ENTRIES_PAGE_LIMIT = "entries_limit";
     public static final String SAVE_SERVER_CREDENTIALS = "save_credentials_enabled";
     public static final String URL_CREDENTIALS = "url";
@@ -29,10 +37,13 @@ public class SettingsFragment extends PreferenceFragment implements NumberPicker
     private EditTextPreference loginCredentials;
     private EditTextPreference passwordCredentials;
 
+    private Crypto crypto;
+
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         preferences = getPreferenceManager().getDefaultSharedPreferences(getActivity());
+        crypto = new Crypto(getActivity());
 
         loadPrefs();
     }
@@ -49,9 +60,11 @@ public class SettingsFragment extends PreferenceFragment implements NumberPicker
 
         // Settings fields
         setEntriesPageLimitSummary();
+        setPasswordCredentials();
 
         // Settings Listener
         saveCredentials.setOnPreferenceClickListener(this);
+        passwordCredentials.setOnPreferenceChangeListener(this);
     }
 
     private void setSaveServerCredentials(boolean isEnabled){
@@ -85,6 +98,26 @@ public class SettingsFragment extends PreferenceFragment implements NumberPicker
         mEntriesLimit.setSummary(getString(R.string.entries_summary, getEntriesPageLimit()));
     }
 
+    private void setPasswordCredentials(){
+        String password;
+        password = preferences.getString(PASSWORD_CREDENTIALS, null);
+        if(password != null)
+            try {
+                passwordCredentials.setText(crypto.decryptBase64(password));
+            } catch (Exception e) { e.printStackTrace();  } // TODO: Something useful
+    }
+
+    private void savePassword(String password){
+        try {
+            SharedPreferences.Editor editor = preferences.edit();
+            byte [] encryptedPassword;
+            encryptedPassword = crypto.encrypt(password);
+            String passwordBase64 = Base64.encodeToString(encryptedPassword, Base64.DEFAULT);
+            editor.putString(PASSWORD_CREDENTIALS, passwordBase64);
+            editor.apply();
+        } catch (Exception e) { e.printStackTrace(); } // TODO: Something useful
+    }
+
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         if(preference == mEntriesLimit){
@@ -111,5 +144,13 @@ public class SettingsFragment extends PreferenceFragment implements NumberPicker
             return false;
 
         return true;
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        if(preference == passwordCredentials){
+            savePassword((String) newValue);
+        }
+        return false;
     }
 }

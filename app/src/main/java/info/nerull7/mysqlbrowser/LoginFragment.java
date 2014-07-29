@@ -63,8 +63,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
         if(sharedPreferences.getBoolean(SettingsFragment.SAVE_SERVER_CREDENTIALS, false)){
             urlTextbox.setText(sharedPreferences.getString(SettingsFragment.URL_CREDENTIALS, null));
             loginTextbox.setText(sharedPreferences.getString(SettingsFragment.LOGIN_CREDENTIALS, null));
-            passwordTextbox.setText(sharedPreferences.getString(SettingsFragment.PASSWORD_CREDENTIALS, null));
-            test(urlTextbox.getText().toString());
+            Crypto crypto = new Crypto(getActivity());
+            String password = sharedPreferences.getString(SettingsFragment.PASSWORD_CREDENTIALS, null);
+            if(password!=null) {
+                try {
+                    passwordTextbox.setText(crypto.decryptBase64(password));
+                } catch (Exception e) { e.printStackTrace(); }
+            }
+//            test(urlTextbox.getText().toString());
         }
     }
 
@@ -72,10 +78,9 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
         String tmp;
         byte [] tmp_byte;
         try {
-            tmp_byte = Crypto.encrypt(text);
-            Log.d("Crypto", "encrypted: " + tmp_byte);
-            tmp = Crypto.decrypt(tmp_byte);
-            Log.d("Crypto", "decrypted: " + tmp);
+            Crypto crypto = new Crypto(getActivity());
+            tmp_byte = crypto.encrypt(text);
+            crypto.decrypt(tmp_byte);
         } catch (Exception e) { e.printStackTrace(); }
     }
 
