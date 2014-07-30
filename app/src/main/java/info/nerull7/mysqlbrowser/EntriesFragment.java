@@ -1,5 +1,6 @@
 package info.nerull7.mysqlbrowser;
 
+import android.app.ActionBar;
 import android.app.Fragment;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -157,7 +158,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
                 }
                 entriesTable.addView(newRow);
 
-                syncWidths(); // please don't crash
+                syncWidths();
                 fakeScroll();
             }
         } else {
@@ -166,7 +167,8 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
             errorMessage.setTypeface(null, Typeface.ITALIC);
             errorMessage.setClickable(false);
             entriesScrollView.removeView(entriesTable);
-            rootView.addView(errorMessage);
+            headerFrame.setVisibility(View.VISIBLE);
+            entriesScrollView.addView(errorMessage);
         }
 
         setLoading(false);
