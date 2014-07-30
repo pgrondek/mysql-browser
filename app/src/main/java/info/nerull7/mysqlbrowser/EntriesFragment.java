@@ -107,6 +107,9 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
                     newRow.addView(textView);
                 }
                 entriesTable.addView(newRow);
+
+                syncWidths(); // please don't crash
+                fakeScroll();
             }
         } else {
             TextView errorMessage = new TextView(getActivity());
@@ -116,8 +119,6 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
             entriesScrollView.removeView(entriesTable);
             rootView.addView(errorMessage);
         }
-        syncWidths(); // please don't crash
-        fakeScroll();
 
         progressBar.setVisibility(View.INVISIBLE);
     }
