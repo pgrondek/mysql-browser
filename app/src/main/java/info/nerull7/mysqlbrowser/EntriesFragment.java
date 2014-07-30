@@ -1,6 +1,5 @@
 package info.nerull7.mysqlbrowser;
 
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -164,7 +163,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
                     textView.setText(elements.get(j));
                     textView.setLayoutParams(layoutParams);
                     textView.setPadding(ENTRIES_PADDING_LEFT, ENTRIES_PADDING_TOP, ENTRIES_PADDING_RIGHT, ENTRIES_PADDING_BOTTOM);
-                    textView.setBackgroundResource(R.drawable.border_emelent);
+                    textView.setBackgroundResource(R.drawable.background_element);
                     newRow.addView(textView);
                 }
                 entriesTable.addView(newRow);
@@ -195,7 +194,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
             textView.setText(fieldList.get(i));
             textView.setTypeface(null, Typeface.BOLD);
             textView.setLayoutParams(layoutParams);
-            textView.setBackgroundResource(R.drawable.border_emelent);
+            textView.setBackgroundResource(R.drawable.background_header);
             textView.setPadding(HEADER_PADDING_LEFT, HEADER_PADDING_TOP, HEADER_PADDING_RIGHT, HEADER_PADDING_BOTTOM);
             headerRow.addView(textView);
         }
