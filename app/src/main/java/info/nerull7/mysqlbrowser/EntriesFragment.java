@@ -1,13 +1,13 @@
 package info.nerull7.mysqlbrowser;
 
-import android.app.ActionBar;
 import android.app.Fragment;
-import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -25,7 +25,7 @@ import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
 /**
  * Created by nerull7 on 15.07.14.
  */
-public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.MatrixReturnListener, AsyncDatabaseConnector.ListReturnListener{
+public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.MatrixReturnListener, AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.IntegerReturnListener {
     private TableLayout entriesTable;
     private CustomScrollView entriesScrollView;
     private FrameLayout headerFrame;
@@ -37,9 +37,13 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     private String tableName;
     private int entriesLimit;
     private int page;
+    private int pageCount;
     private ProgressBar progressBar;
     private ScrollView fakeScrollView;
     private View dummyView;
+
+    private MenuInflater menuInflater;
+    private Menu menu;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,11 +52,12 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
 
         initArguments();
         initViewItems(rootView);
-//        setupActionBar();
 
+        Static.asyncDatabaseConnector.setIntegerReturnListener(this);
         Static.asyncDatabaseConnector.setListReturnListener(this);
         Static.asyncDatabaseConnector.setMatrixReturnListener(this);
         Static.asyncDatabaseConnector.getFields(tableName);
+        Static.asyncDatabaseConnector.getEntriesCount(tableName);
 
         return rootView;
     }
@@ -60,7 +65,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     private void initArguments(){
         databaseName = getArguments().getString(Static.DATABASE_NAME_ARG);
         tableName = getArguments().getString(Static.TABLE_NAME_ARG);
-        page = getArguments().getInt(Static.PAGE_ARG);
+        page = 1;
 
         entriesLimit = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt(SettingsFragment.ENTRIES_PAGE_LIMIT, SettingsFragment.ENTRIES_PAGE_LIMIT_DEF);
     }
@@ -87,11 +92,55 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         entriesTable.setVisibility(View.INVISIBLE);
     }
 
-    // TODO Handling ActionBar
-//    private void setupActionBar() {
-//        ActionBar actionBar = getActivity().getActionBar();
-//        actionBar.
-//    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.entries_activity_actions, menu);
+        menuInflater = inflater; // I think we need it later
+        menu.findItem(R.id.action_previous).setVisible(false); // hide previous
+        this.menu = menu;
+//        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    private void changeMenus(int page){
+        if(page==1){
+            menu.findItem(R.id.action_previous).setVisible(false);
+        } else if (page==2){
+            menu.findItem(R.id.action_previous).setVisible(true);
+        }
+        if (page==(pageCount-1)) {
+            menu.findItem(R.id.action_next).setVisible(true);
+        } else if (page==pageCount) {
+            menu.findItem(R.id.action_next).setVisible(false);
+        }
+    }
+
+    private void setLoading(boolean isLoading){
+        if(menu != null) {
+            menu.findItem(R.id.action_next).setEnabled(!isLoading);
+            menu.findItem(R.id.action_previous).setEnabled(!isLoading);
+        }
+        progressBar.setVisibility(isLoading ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_previous:
+                page--;
+                break;
+            case R.id.action_next:
+                page++;
+                break;
+        }
+        changeMenus(page);
+        entriesTable.removeAllViews(); // clean table
+
+        setLoading(true);
+        Static.asyncDatabaseConnector.getRows(tableName, entriesLimit, page); // get new entries
+
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onMatrixReturn(List<List<String>> rows) {
@@ -120,7 +169,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
             rootView.addView(errorMessage);
         }
 
-        progressBar.setVisibility(View.INVISIBLE);
+        setLoading(false);
     }
 
     @Override
@@ -138,6 +187,16 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         headerFrame.addView(headerRow);
 
         Static.asyncDatabaseConnector.getRows(tableName, entriesLimit, page);
+    }
+
+    @Override
+    public void onIntegerReturn(int result) {
+        pageCount = result/entriesLimit;
+        if( result%entriesLimit > 0)
+            pageCount++;
+
+        if(pageCount>1)
+            setHasOptionsMenu(true);
     }
 
     private void syncWidths(){ // TODO: Merge with adding columns maybe? Loops -= 3 should be quicker

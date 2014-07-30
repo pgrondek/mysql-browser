@@ -11,7 +11,6 @@ import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
 public class Static {
     public static final String DATABASE_NAME_ARG = "DatabaseName";
     public static final String TABLE_NAME_ARG = "TableName";
-    public static final String PAGE_ARG = "Page";
 
     public static AsyncDatabaseConnector asyncDatabaseConnector = null;
 

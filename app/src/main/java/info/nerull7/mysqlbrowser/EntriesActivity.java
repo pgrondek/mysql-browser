@@ -15,8 +15,6 @@ public class EntriesActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entries);
         Bundle bundle = getIntent().getExtras();
-        bundle.putInt(Static.PAGE_ARG, 0);
-//        String titleName = bundle.getString(Static.DATABASE_NAME_ARG)+"->"+bundle.getString(Static.TABLE_NAME_ARG);
         String titleName = bundle.getString(Static.TABLE_NAME_ARG);
         setTitle(titleName);
 
@@ -29,21 +27,4 @@ public class EntriesActivity extends Activity {
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) { // TODO Implement pages
-        switch (item.getItemId()){
-            case R.id.action_previous:
-            case R.id.action_next:
-
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.entries_activity_actions, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
 }

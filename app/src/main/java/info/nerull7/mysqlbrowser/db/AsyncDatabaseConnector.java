@@ -23,6 +23,7 @@ public class AsyncDatabaseConnector {
     public static final String ACTION_DATABASE_LIST = "dblist";
     public static final String ACTION_TABLE_LIST = "tablelist";
     public static final String ACTION_FIELD_LIST = "fieldlist";
+    public static final String ACTION_ENTRIES_COUNT = "numrows";
     public static final String ACTION_DATA_MATRIX = "getrows";
 
     private String login;
@@ -32,6 +33,7 @@ public class AsyncDatabaseConnector {
     private String database;
 
     private BooleanReturnListener booleanReturnListener;
+    private IntegerReturnListener integerReturnListener;
     private StringReturnListener stringReturnListener;
     private ListReturnListener listReturnListener;
     private MatrixReturnListener matrixReturnListener;
@@ -151,8 +153,20 @@ public class AsyncDatabaseConnector {
     }
 
     public void getRows(String table, int count, int page){
-        int limitStart = page * count;
+        int limitStart = (page-1) * count;
         getMatrix(actionUrlBuilder(ACTION_DATA_MATRIX)+"&d="+database+"&t="+table+"&s="+limitStart+"&l="+count);
+    }
+
+    public void getEntriesCount(String table){
+        String urlQuery = actionUrlBuilder(ACTION_ENTRIES_COUNT)+"&d="+database+"&t="+table;
+        Downloader downloader = new Downloader(new Downloader.OnFinishedListener() {
+            @Override
+            public void onFinished(String data, String error) {
+                if(integerReturnListener!=null)
+                    integerReturnListener.onIntegerReturn(Integer.parseInt(data));
+            }
+        });
+        downloader.execute(urlQuery);
     }
 
     public void setBooleanReturnListener(BooleanReturnListener booleanReturnListener){
@@ -161,6 +175,10 @@ public class AsyncDatabaseConnector {
 
     public void setStringReturnListener(StringReturnListener stringReturnListener) {
         this.stringReturnListener = stringReturnListener;
+    }
+
+    public void setIntegerReturnListener(IntegerReturnListener integerReturnListener){
+        this.integerReturnListener = integerReturnListener;
     }
 
     public void setListReturnListener(ListReturnListener listReturnListener) {
@@ -174,7 +192,11 @@ public class AsyncDatabaseConnector {
     public static interface BooleanReturnListener{
         public void onBooleanReturn(boolean result);
     }
-    
+
+    public static interface IntegerReturnListener{
+        public void onIntegerReturn(int result);
+    }
+
     public static interface StringReturnListener{
         public void onStringReturn(String data);
     }
