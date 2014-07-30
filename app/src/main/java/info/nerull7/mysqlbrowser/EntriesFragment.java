@@ -27,6 +27,15 @@ import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
  * Created by nerull7 on 15.07.14.
  */
 public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.MatrixReturnListener, AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.IntegerReturnListener {
+    private static final int HEADER_PADDING_TOP = 15;
+    private static final int HEADER_PADDING_BOTTOM = 15;
+    private static final int HEADER_PADDING_LEFT = 15;
+    private static final int HEADER_PADDING_RIGHT = 15;
+    private static final int ENTRIES_PADDING_TOP = 30;
+    private static final int ENTRIES_PADDING_BOTTOM = 30;
+    private static final int ENTRIES_PADDING_LEFT = 15;
+    private static final int ENTRIES_PADDING_RIGHT = 15;
+
     private TableLayout entriesTable;
     private CustomScrollView entriesScrollView;
     private FrameLayout headerFrame;
@@ -154,6 +163,8 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
                     TextView textView = new TextView(getActivity());
                     textView.setText(elements.get(j));
                     textView.setLayoutParams(layoutParams);
+                    textView.setPadding(ENTRIES_PADDING_LEFT, ENTRIES_PADDING_TOP, ENTRIES_PADDING_RIGHT, ENTRIES_PADDING_BOTTOM);
+                    textView.setBackgroundResource(R.drawable.border_emelent);
                     newRow.addView(textView);
                 }
                 entriesTable.addView(newRow);
@@ -184,6 +195,8 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
             textView.setText(fieldList.get(i));
             textView.setTypeface(null, Typeface.BOLD);
             textView.setLayoutParams(layoutParams);
+            textView.setBackgroundResource(R.drawable.border_emelent);
+            textView.setPadding(HEADER_PADDING_LEFT, HEADER_PADDING_TOP, HEADER_PADDING_RIGHT, HEADER_PADDING_BOTTOM);
             headerRow.addView(textView);
         }
         headerFrame.addView(headerRow);
