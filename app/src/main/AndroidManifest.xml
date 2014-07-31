@@ -26,7 +26,8 @@
         </activity>
         <activity
             android:name=".EntriesActivity"
-            android:label="@string/title_activity_entries" >
+            android:label="@string/title_activity_entries"
+            android:theme="@style/EntriesTheme" >
         </activity>
         <activity
             android:name=".SettingsActivity"

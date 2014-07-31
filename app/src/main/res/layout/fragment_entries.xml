@@ -4,18 +4,6 @@
     android:layout_height="match_parent"
     tools:context="info.nerull7.mysqlbrowser.EntriesFragment">
 
-
-
-    <ProgressBar
-        style="?android:attr/progressBarStyleHorizontal"
-        android:indeterminate="true"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/loginProgressBar"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="false"
-        android:layout_marginTop="-7dp" />
-
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
@@ -43,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/headerFrame"
-                android:paddingTop="@dimen/activity_vertical_margin"></FrameLayout>
+                ></FrameLayout>
 
             <info.nerull7.mysqlbrowser.CustomScrollView
                 android:layout_width="match_parent"
@@ -59,5 +47,15 @@
             </info.nerull7.mysqlbrowser.CustomScrollView>
         </RelativeLayout>
     </HorizontalScrollView>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:indeterminate="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/loginProgressBar"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="false"
+        android:layout_marginTop="-7dp" />
 
 </RelativeLayout>

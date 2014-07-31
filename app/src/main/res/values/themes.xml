@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Activites Themes-->
+    <style name="EntriesTheme"
+        parent="android:Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/EntriesActionBar</item>
+        </style>
+
+    <!--Action Bar styles-->
+    <style name="EntriesActionBar"
+        parent="android:Widget.Holo.Light.ActionBar.Solid" >
+        <item name="android:background">@color/header_background</item>
+    </style>
+
+</resources>
