@@ -2,6 +2,7 @@ package info.nerull7.mysqlbrowser;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.widget.ScrollView;
 
 /**
@@ -9,10 +10,18 @@ import android.widget.ScrollView;
  */
 public class CustomScrollView extends ScrollView {
 
-    private OnScrollChangedListener listener;
+    private OnTouchEventListener onTouchEventListener;
 
-    public void setOnScrollChangedListener(OnScrollChangedListener listener){
-        this.listener = listener;
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        if(onTouchEventListener != null){
+            onTouchEventListener.onTouchEvent(ev);
+        }
+        return super.onTouchEvent(ev);
+    }
+
+    public void setOnTouchEventListener(OnTouchEventListener onTouchEventListener){
+        this.onTouchEventListener = onTouchEventListener;
     }
 
     public CustomScrollView(Context context) {
@@ -23,13 +32,7 @@ public class CustomScrollView extends ScrollView {
         super(context,attributeSet);
     }
 
-    @Override
-    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
-        if(listener!=null)
-            listener.onScrollChanged(l,t,oldl,oldt);
-    }
-
-    public interface OnScrollChangedListener{
-        public void onScrollChanged(int l, int t, int oldl, int oldt);
+    public interface OnTouchEventListener {
+        public boolean onTouchEvent(MotionEvent ev);
     }
 }

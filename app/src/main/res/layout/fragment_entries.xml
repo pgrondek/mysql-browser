@@ -4,19 +4,6 @@
     android:layout_height="match_parent"
     tools:context="info.nerull7.mysqlbrowser.EntriesFragment">
 
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_below="@+id/loginProgressBar"
-        android:layout_alignParentRight="true"
-        android:foregroundGravity="right"
-        android:id="@+id/fakeScroll">
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/dummyView"/>
-    </ScrollView>
-
     <HorizontalScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,7 +20,7 @@
                 android:id="@+id/headerFrame"
                 ></FrameLayout>
 
-            <info.nerull7.mysqlbrowser.CustomScrollView
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/entriesScrollView"
@@ -44,7 +31,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/entriesTable">
                 </TableLayout>
-            </info.nerull7.mysqlbrowser.CustomScrollView>
+            </ScrollView>
         </RelativeLayout>
     </HorizontalScrollView>
 
@@ -57,5 +44,19 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="false"
         android:layout_marginTop="-7dp" />
+
+    <info.nerull7.mysqlbrowser.CustomScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/loginProgressBar"
+        android:layout_alignParentRight="true"
+        android:foregroundGravity="right"
+        android:id="@+id/fakeScroll"
+        android:overScrollMode="never">
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dummyView"/>
+    </info.nerull7.mysqlbrowser.CustomScrollView>
 
 </RelativeLayout>

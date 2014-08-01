@@ -8,9 +8,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -36,9 +38,10 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     private static final int ENTRIES_PADDING_RIGHT = 15;
 
     private TableLayout entriesTable;
-    private CustomScrollView entriesScrollView;
+    private ScrollView entriesScrollView;
     private FrameLayout headerFrame;
     private RelativeLayout rootView;
+    private HorizontalScrollView horizontalScrollView;
     private TableRow.LayoutParams layoutParams;
     private TableRow headerRow;
 
@@ -48,7 +51,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     private int page;
     private int pageCount;
     private ProgressBar progressBar;
-    private ScrollView fakeScrollView;
+    private CustomScrollView fakeScrollView;
     private View dummyView;
 
     private MenuInflater menuInflater;
@@ -82,17 +85,20 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     private void initViewItems(View rootView){
         headerFrame = (FrameLayout) rootView.findViewById(R.id.headerFrame);
         entriesTable = (TableLayout) rootView.findViewById(R.id.entriesTable);
-        entriesScrollView = (CustomScrollView) rootView.findViewById(R.id.entriesScrollView);
-        fakeScrollView = (ScrollView) rootView.findViewById(R.id.fakeScroll);
+        entriesScrollView = (ScrollView) rootView.findViewById(R.id.entriesScrollView);
+        fakeScrollView = (CustomScrollView) rootView.findViewById(R.id.fakeScroll);
         progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
         dummyView = rootView.findViewById(R.id.dummyView);
+        horizontalScrollView = (HorizontalScrollView) rootView.findViewById(R.id.horizontalScrollView);
 
         this.rootView = (RelativeLayout) rootView;
 
-        entriesScrollView.setOnScrollChangedListener(new CustomScrollView.OnScrollChangedListener() {
+        fakeScrollView.setOnTouchEventListener(new CustomScrollView.OnTouchEventListener() {
             @Override
-            public void onScrollChanged(int l, int t, int oldl, int oldt) {
-                fakeScrollView.scrollTo(0,t);
+            public boolean onTouchEvent(MotionEvent ev) {
+                entriesScrollView.onTouchEvent(ev);
+                horizontalScrollView.onTouchEvent(ev);
+                return true;
             }
         });
 
@@ -259,6 +265,11 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         entriesScrollView.measure(View.MeasureSpec.UNSPECIFIED,View.MeasureSpec.UNSPECIFIED);
         int height = entriesScrollView.getMeasuredHeight();
         dummyView.setMinimumHeight(height);
+
+        RelativeLayout.LayoutParams fakeScrollLayout = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        fakeScrollLayout.setMargins(0,headerFrame.getHeight(),0,0);
+
+        fakeScrollView.setLayoutParams(fakeScrollLayout);
     }
 
 
