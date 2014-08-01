@@ -2,4 +2,6 @@
 <resources>
     <color name="border">@android:color/tab_indicator_text</color>
     <color name="header_background">@android:color/holo_orange_light</color>
+    <color name="entries_background_color_1">@android:color/background_light</color>
+    <color name="entries_background_color_2">#ffcccccc</color>
 </resources>

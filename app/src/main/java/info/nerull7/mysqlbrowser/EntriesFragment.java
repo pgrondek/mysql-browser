@@ -155,15 +155,23 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     public void onMatrixReturn(List<List<String>> rows) {
         // Now we get Rows
         if(rows!=null) {
+            int background;
             for (int i = 0; i < rows.size(); i++) {
                 List<String> elements = rows.get(i);
                 TableRow newRow = new TableRow(getActivity());
+
+                if( i%2 == 0 ){ // Two backgrounds for lines for better visibility
+                    background=R.drawable.entries_element_1;
+                } else {
+                    background=R.drawable.entries_element_2;
+                }
+
                 for (int j = 0; j < elements.size(); j++) { // elements.size can be the same as in header so maybe some one number or not
                     TextView textView = new TextView(getActivity());
                     textView.setText(elements.get(j));
                     textView.setLayoutParams(layoutParams);
                     textView.setPadding(ENTRIES_PADDING_LEFT, ENTRIES_PADDING_TOP, ENTRIES_PADDING_RIGHT, ENTRIES_PADDING_BOTTOM);
-                    textView.setBackgroundResource(R.drawable.background_element);
+                    textView.setBackgroundResource(background);
                     newRow.addView(textView);
                 }
                 entriesTable.addView(newRow);
