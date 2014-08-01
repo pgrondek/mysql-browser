@@ -123,16 +123,16 @@ public class AsyncDatabaseConnector {
             public void onFinished(String data, String error) {
                 List<String>list = null;
                 boolean listenerData;
-                if(data==null) {
+                if(data == null) {
                     listenerData = false;
                     errorMsg = error;
-                }
-                else if(booleanReturnListener!=null)
-                    listenerData = (data.compareTo("OK")==0);
-                else {
+                } else if( data.compareTo("OK") == 0){
+                    listenerData = true;
+                } else {
                     errorMsg = data;
                     listenerData = false;
                 }
+
                 booleanReturnListener.onBooleanReturn(listenerData);
             }
         });
