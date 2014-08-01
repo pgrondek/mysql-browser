@@ -1,7 +1,13 @@
 package info.nerull7.mysqlbrowser;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
+import java.net.NetworkInterface;
 
 import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
 
@@ -17,5 +23,30 @@ public class Static {
     public static void startSettings(Context context){
         Intent intent = new Intent(context, SettingsActivity.class);
         context.startActivity(intent);
+    }
+
+    public static boolean isNetworkConnected(Context context){
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if(networkInfo!=null && networkInfo.isConnected()){
+            return true;
+        } else
+            return false;
+    }
+
+    public static void showErrorAlert(String errorMessage, Context context){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(errorMessage);
+        builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // Nothing to do here
+                // Cleaning inputs is stupid
+            }
+        });
+        builder.setTitle(R.string.error);
+        builder.setIcon(R.drawable.ic_action_warning);
+        builder.create();
+        builder.show();
     }
 }

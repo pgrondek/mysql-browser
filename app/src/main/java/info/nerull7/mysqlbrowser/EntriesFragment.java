@@ -139,21 +139,23 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_previous:
-                page--;
-                break;
-            case R.id.action_next:
-                page++;
-                break;
+        if(Static.isNetworkConnected(getActivity())) {
+            switch (item.getItemId()) {
+                case R.id.action_previous:
+                    page--;
+                    break;
+                case R.id.action_next:
+                    page++;
+                    break;
+            }
+            changeMenus(page);
+            entriesTable.removeAllViews(); // clean table
+
+            setLoading(true);
+            Static.asyncDatabaseConnector.getRows(tableName, entriesLimit, page); // get new entries
+        } else {
+            Static.showErrorAlert(getResources().getString(R.string.no_connection), getActivity());
         }
-        changeMenus(page);
-        entriesTable.removeAllViews(); // clean table
-
-        setLoading(true);
-        Static.asyncDatabaseConnector.getRows(tableName, entriesLimit, page); // get new entries
-
-
         return super.onOptionsItemSelected(item);
     }
 

@@ -30,5 +30,6 @@
     <string name="login_settings">Login credentials</string>
     <string name="save_credentials">Save credentials</string>
     <string name="connector_url">Connector URL</string>
+    <string name="no_connection">No Internet Connection</string>
 
 </resources>

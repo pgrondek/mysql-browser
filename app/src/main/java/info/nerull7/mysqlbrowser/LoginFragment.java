@@ -85,9 +85,16 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
         login = loginTextbox.getText().toString();
         password = passwordTextbox.getText().toString();
         url = urlTextbox.getText().toString();
-        asyncDatabaseConnector = new AsyncDatabaseConnector(login, password, url);
-        asyncDatabaseConnector.setBooleanReturnListener(this);
-        asyncDatabaseConnector.checkLogin();
+
+        if(Static.isNetworkConnected(getActivity())) {
+            asyncDatabaseConnector = new AsyncDatabaseConnector(login, password, url);
+            asyncDatabaseConnector.setBooleanReturnListener(this);
+            asyncDatabaseConnector.checkLogin();
+        } else {
+            Static.showErrorAlert(getResources().getString(R.string.no_connection), getActivity());
+            loginButton.setEnabled(true); // Now we can click button again
+            progressBar.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -98,21 +105,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
             startActivity(intent);
         }
         else {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(Static.asyncDatabaseConnector.errorMsg);
-            builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    // Nothing to do here
-                    // Cleaning inputs is stupid
-                }
-            });
-            builder.setTitle(R.string.error);
-            builder.setIcon(R.drawable.ic_action_warning);
-            builder.create();
-            builder.show();
+            Static.showErrorAlert(Static.asyncDatabaseConnector.errorMsg, getActivity());
         }
         loginButton.setEnabled(true); // Now we can click button again
         progressBar.setVisibility(View.INVISIBLE);
     }
+
+
 }

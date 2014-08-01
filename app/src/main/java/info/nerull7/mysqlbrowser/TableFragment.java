@@ -45,12 +45,17 @@ public class TableFragment extends Fragment implements AdapterView.OnItemClickLi
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        String chosenTable =  (String) listAdapter.getItem(position);
-        listAdapter.getItem(position);
-        Intent intent = new Intent(getActivity(), EntriesActivity.class);
-        intent.putExtra(Static.DATABASE_NAME_ARG,databaseName);
-        intent.putExtra(Static.TABLE_NAME_ARG,chosenTable);
-        startActivity(intent);
+        if(Static.isNetworkConnected(getActivity())) {
+            String chosenTable =  (String) listAdapter.getItem(position);
+            listAdapter.getItem(position);
+            Intent intent = new Intent(getActivity(), EntriesActivity.class);
+            intent.putExtra(Static.DATABASE_NAME_ARG,databaseName);
+            intent.putExtra(Static.TABLE_NAME_ARG,chosenTable);
+            startActivity(intent);
+        } else {
+            Static.showErrorAlert(getResources().getString(R.string.no_connection), getActivity());
+        }
+
     }
 
     @Override
