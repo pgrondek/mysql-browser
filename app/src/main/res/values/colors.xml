@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="border">@android:color/tab_indicator_text</color>
-    <color name="header_background">@android:color/holo_orange_light</color>
+    <color name="header_background">#ffaa22</color>
+    <color name="header_login_background">@android:color/holo_blue_dark</color>
     <color name="entries_background_color_1">@android:color/background_light</color>
     <color name="entries_background_color_2">#ffcccccc</color>
 </resources>

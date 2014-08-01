@@ -1,14 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light">
-        <!-- Customize your theme here. -->
+    <!--Action Bar styles-->
+    <style name="DefaultActionBar"
+        parent="android:Widget.Holo.Light.ActionBar.Solid" >
+        <item name="android:background">@color/header_background</item>
+        <item name="android:icon">@drawable/ic_revert</item>
     </style>
 
-    <style name="TableTheme">
-        <item name="android:layout_width">1dip</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@android:color/white</item>
+    <style name="LoginActionBar"
+        parent="DefaultActionBar" >
+        <item name="android:background">@color/header_login_background</item>
+        <item name="android:icon">@drawable/ic_launcher</item>
     </style>
 
+    <style name="SettingsActionBar"
+        parent="DefaultActionBar">
+        <item name="android:icon">@drawable/ic_action_settings</item>
+        </style>
 </resources>

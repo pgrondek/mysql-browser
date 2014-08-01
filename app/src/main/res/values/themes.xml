@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--Activites Themes-->
-    <style name="EntriesTheme"
+    <!-- Base application theme. -->
+    <style name="AppTheme"
         parent="android:Theme.Holo.Light">
-        <item name="android:actionBarStyle">@style/EntriesActionBar</item>
-        </style>
+        <item name="android:actionBarStyle">@style/DefaultActionBar</item>
+    </style>
 
-    <!--Action Bar styles-->
-    <style name="EntriesActionBar"
-        parent="android:Widget.Holo.Light.ActionBar.Solid" >
-        <item name="android:background">@color/header_background</item>
+    <style name="LoginTheme"
+        parent="AppTheme">
+        <item name="android:actionBarStyle">@style/LoginActionBar</item>
+    </style>
+
+    <style name="SettingsTheme"
+        parent="AppTheme">
+        <item name="android:actionBarStyle">@style/SettingsActionBar</item>
     </style>
 
 </resources>
