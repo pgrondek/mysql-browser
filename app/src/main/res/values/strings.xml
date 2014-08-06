@@ -33,5 +33,6 @@
     <string name="no_connection">No Internet Connection</string>
     <string name="action_add">Add new</string>
     <string name="title_activity_element">ElementActivity</string>
+    <string name="action_save">Save</string>
 
 </resources>

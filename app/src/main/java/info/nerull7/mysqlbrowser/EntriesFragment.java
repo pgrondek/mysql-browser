@@ -1,6 +1,7 @@
 package info.nerull7.mysqlbrowser;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -147,7 +148,10 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     }
 
     private void addNewElement(){
-        //TODO Implement this method
+        Intent intent = new Intent(getActivity(), ElementActivity.class);
+        intent.putExtra(Static.DATABASE_NAME_ARG,databaseName);
+        intent.putExtra(Static.TABLE_NAME_ARG,tableName);
+        startActivity(intent);
     }
 
     @Override

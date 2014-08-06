@@ -11,10 +11,17 @@ public class ElementActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_database);
+        setContentView(R.layout.activity_element);
+        Bundle bundle = getIntent().getExtras();
+        String titleName = bundle.getString(Static.TABLE_NAME_ARG);
+        setTitle(titleName);
+
+        ElementFragment elementFragment = new ElementFragment();
+        elementFragment.setArguments(bundle);
+
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new ElementFragment())
+                    .add(R.id.container, elementFragment)
                     .commit();
         }
     }
