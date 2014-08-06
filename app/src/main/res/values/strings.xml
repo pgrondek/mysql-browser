@@ -34,5 +34,8 @@
     <string name="action_save">Save</string>
     <string name="title_fragment_database">Available Databases</string>
     <string name="title_activity_list">ListActivity</string>
+    <string name="error_no_save">Your data will NOT be saved! Would you like to continue?</string>
+    <string name="yes">Yes</string>
+    <string name="warning">Warning</string>
 
 </resources>
