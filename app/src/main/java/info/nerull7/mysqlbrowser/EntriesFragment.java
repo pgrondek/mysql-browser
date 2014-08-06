@@ -54,7 +54,6 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     private CustomScrollView fakeScrollView;
     private View dummyView;
 
-    private MenuInflater menuInflater;
     private Menu menu;
 
     @Override
@@ -110,10 +109,12 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.entries_activity_actions, menu);
-        menuInflater = inflater; // I think we need it later
+
         menu.findItem(R.id.action_previous).setVisible(false); // hide previous
+        if(pageCount<=1)
+            menu.findItem(R.id.action_next).setVisible(false); // hide next if we don't have any more pages
         this.menu = menu;
-//        super.onCreateOptionsMenu(menu, inflater);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     private void changeMenus(int page){
@@ -137,22 +138,34 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         progressBar.setVisibility(isLoading ? View.VISIBLE : View.INVISIBLE);
     }
 
+    private void loadAnotherPage(){
+        changeMenus(page);
+        entriesTable.removeAllViews(); // clean table
+
+        setLoading(true);
+        Static.asyncDatabaseConnector.getRows(tableName, entriesLimit, page); // get new entries
+    }
+
+    private void addNewElement(){
+        //TODO Implement this method
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(Static.isNetworkConnected(getActivity())) {
+        if (Static.isNetworkConnected(getActivity())) {
             switch (item.getItemId()) {
                 case R.id.action_previous:
                     page--;
+                    loadAnotherPage();
                     break;
                 case R.id.action_next:
                     page++;
+                    loadAnotherPage();
+                    break;
+                case R.id.action_add:
+                    addNewElement();
                     break;
             }
-            changeMenus(page);
-            entriesTable.removeAllViews(); // clean table
-
-            setLoading(true);
-            Static.asyncDatabaseConnector.getRows(tableName, entriesLimit, page); // get new entries
         } else {
             Static.showErrorAlert(getResources().getString(R.string.no_connection), getActivity());
         }
@@ -225,8 +238,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         if( result%entriesLimit > 0)
             pageCount++;
 
-        if(pageCount>1)
-            setHasOptionsMenu(true);
+        setHasOptionsMenu(true);
     }
 
     private void syncWidths(){ // TODO: Merge with adding columns maybe? Loops -= 3 should be quicker

@@ -2,6 +2,12 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/action_add"
+        android:icon="@drawable/ic_action_add_circle"
+        android:title="@string/action_add"
+        android:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_previous"
         android:icon="@drawable/ic_action_arrow_back"
         android:title="@string/action_previous"
