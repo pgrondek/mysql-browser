@@ -18,12 +18,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DatabaseActivity"
-            android:label="@string/title_activity_database" >
-        </activity>
-        <activity
-            android:name=".TableActivity"
-            android:label="@string/title_activity_table" >
+            android:name=".ListActivity"
+            android:label="@string/title_activity_list" >
         </activity>
         <activity
             android:name=".EntriesActivity"

@@ -1,19 +1,31 @@
 package info.nerull7.mysqlbrowser;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class DatabaseActivity extends Activity {
+public class ListActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_database);
+        setContentView(R.layout.activity_list);
+        Bundle extras = getIntent().getExtras();
+        String fragmentName = extras.getString(Static.FRAGMENT_TO_START);
+        Fragment fragment = null;
+        if(fragmentName.compareTo(Static.FRAGMENT_DATABASE)==0){
+            fragment = new DatabaseFragment();
+            setTitle(R.string.title_fragment_database);
+        } else if (fragmentName.compareTo(Static.FRAGMENT_TABLE)==0) {
+            fragment = new TableFragment();
+            setTitle(extras.getString(Static.DATABASE_NAME_ARG));
+        }
+        fragment.setArguments(getIntent().getExtras());
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new DatabaseFragment())
+                    .add(R.id.container, fragment)
                     .commit();
         }
     }

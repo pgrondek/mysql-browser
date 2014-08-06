@@ -8,12 +8,10 @@
     <string name="username">Username</string>
     <string name="hint_url">URL ex: https://example.com/c.php</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="title_activity_database">DatabaseActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="login_error">Wrong login/password</string>
     <string name="ok">OK</string>
     <string name="error">Error</string>
-    <string name="title_activity_table">TableActivity</string>
     <string name="title_activity_entries">EntriesActivity</string>
     <string name="general_category">General</string>
     <string name="entries_limit">Entries per page limit</string>
@@ -34,5 +32,7 @@
     <string name="action_add">Add new</string>
     <string name="title_activity_element">ElementActivity</string>
     <string name="action_save">Save</string>
+    <string name="title_fragment_database">Available Databases</string>
+    <string name="title_activity_list">ListActivity</string>
 
 </resources>

@@ -48,7 +48,8 @@ public class DatabaseFragment extends Fragment implements AdapterView.OnItemClic
         if(Static.isNetworkConnected(getActivity())) {
             String chosenDatabase = (String) listAdapter.getItem(position);
             listAdapter.getItem(position);
-            Intent intent = new Intent(getActivity(), TableActivity.class);
+            Intent intent = new Intent(getActivity(), ListActivity.class);
+            intent.putExtra(Static.FRAGMENT_TO_START, Static.FRAGMENT_TABLE);
             intent.putExtra(Static.DATABASE_NAME_ARG, chosenDatabase);
             Static.asyncDatabaseConnector.setDatabaseInUse(chosenDatabase);
             startActivity(intent);
