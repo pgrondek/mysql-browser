@@ -45,6 +45,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        processCredentials();
+    }
+
     private void processCredentials() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
