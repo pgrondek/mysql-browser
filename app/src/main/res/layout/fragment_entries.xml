@@ -5,8 +5,8 @@
     tools:context="info.nerull7.mysqlbrowser.EntriesFragment">
 
     <HorizontalScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:id="@+id/horizontalScrollView" >
 
         <RelativeLayout
@@ -48,7 +48,6 @@
     <info.nerull7.mysqlbrowser.CustomScrollView
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/loginProgressBar"
         android:layout_alignParentRight="true"
         android:foregroundGravity="right"
         android:id="@+id/fakeScroll"

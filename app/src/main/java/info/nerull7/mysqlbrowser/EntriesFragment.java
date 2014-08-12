@@ -1,10 +1,17 @@
 package info.nerull7.mysqlbrowser;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,6 +19,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ProgressBar;
@@ -21,6 +29,9 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
@@ -28,7 +39,7 @@ import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
 /**
  * Created by nerull7 on 15.07.14.
  */
-public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.MatrixReturnListener, AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.IntegerReturnListener {
+public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.MatrixReturnListener, AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.IntegerReturnListener, View.OnClickListener {
     private static final int HEADER_PADDING_TOP = 15;
     private static final int HEADER_PADDING_BOTTOM = 15;
     private static final int HEADER_PADDING_LEFT = 15;
@@ -51,6 +62,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     private int entriesLimit;
     private int page;
     private int pageCount;
+    private int rowCount;
     private ProgressBar progressBar;
     private CustomScrollView fakeScrollView;
     private View dummyView;
@@ -96,8 +108,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         fakeScrollView.setOnTouchEventListener(new CustomScrollView.OnTouchEventListener() {
             @Override
             public boolean onTouchEvent(MotionEvent ev) {
-                entriesScrollView.onTouchEvent(ev);
-                horizontalScrollView.onTouchEvent(ev);
+                entriesScrollView.dispatchTouchEvent(ev);
                 return true;
             }
         });
@@ -197,8 +208,11 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
                     textView.setLayoutParams(layoutParams);
                     textView.setPadding(ENTRIES_PADDING_LEFT, ENTRIES_PADDING_TOP, ENTRIES_PADDING_RIGHT, ENTRIES_PADDING_BOTTOM);
                     textView.setBackgroundResource(background);
+                    textView.setId(j);
                     newRow.addView(textView);
                 }
+                newRow.setClickable(true);
+                newRow.setOnClickListener(this);
                 entriesTable.addView(newRow);
 
                 syncWidths();
@@ -222,6 +236,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         // First we need header
         headerRow = new TableRow(getActivity());
         headerRow.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+        rowCount = fieldList.size();
         for(int i =0;i<fieldList.size();i++){
             TextView textView = new TextView(getActivity());
             textView.setText(fieldList.get(i));
@@ -290,5 +305,20 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         fakeScrollView.setLayoutParams(fakeScrollLayout);
     }
 
+    @Override
+    public void onClick(View view) {
+        ArrayList<String> values = new ArrayList<String>();
+        for(int i=0;i<rowCount;i++){
+            TextView element =  (TextView)view.findViewById(i);
+            values.add(element.getText().toString());
+//            element.setBackgroundResource(android.R.color.holo_blue_bright);
+        }
 
+        Intent intent = new Intent(getActivity(), ElementActivity.class);
+        intent.putExtra(Static.DATABASE_NAME_ARG,databaseName);
+        intent.putExtra(Static.TABLE_NAME_ARG,tableName);
+        intent.putExtra(ElementFragment.EDIT_ELEMENT, true);
+        intent.putStringArrayListExtra(ElementFragment.EDIT_LIST, values);
+        startActivity(intent);
+    }
 }

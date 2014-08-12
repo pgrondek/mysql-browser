@@ -23,12 +23,17 @@ import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
  * Created by nerull7 on 2014-08-06.
  */
 public class ElementFragment extends Fragment implements AsyncDatabaseConnector.ListReturnListener {
+    public static final String EDIT_ELEMENT = "edit_element";
+    public static final String EDIT_LIST = "edit_element_list";
+
     private String databaseName;
     private String tableName;
     private ListAdapter listAdapter;
 
     private ProgressBar progressBar;
     private ListView listView;
+
+    private List<String> values;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,6 +53,10 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
     private void initArguments() {
         databaseName = getArguments().getString(Static.DATABASE_NAME_ARG);
         tableName = getArguments().getString(Static.TABLE_NAME_ARG);
+        if(getArguments().getBoolean(EDIT_ELEMENT))
+            values = getArguments().getStringArrayList(EDIT_LIST);
+        else
+            values = null;
     }
 
     @Override
@@ -58,7 +67,7 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
 
     @Override
     public void onListReturn(List<String> fields) {
-        listAdapter = new ElementArrayAdapter(getActivity(), R.layout.list_item_element_simple, fields);
+        listAdapter = new ElementArrayAdapter(getActivity(), R.layout.list_item_element_simple, fields, values);
         listView.setAdapter(listAdapter);
 //        databasesListView.setAdapter(listAdapter);
 //        databasesListView.setOnItemClickListener(this);

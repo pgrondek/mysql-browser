@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.List;
@@ -14,14 +15,21 @@ import java.util.List;
  */
 public class ElementArrayAdapter extends ArrayAdapter<String> {
     private Context context;
+    private List<String> fields;
     private List<String> values;
     private int layout;
 
-    public ElementArrayAdapter(Context context, int resource, List<String> objects) {
-        super(context, resource, objects);
+    public ElementArrayAdapter(Context context, int resource, List<String> fields) {
+        super(context, resource, fields);
         this.context = context;
-        values = objects;
+        this.fields = fields;
         layout = resource;
+        values = null;
+    }
+
+    public ElementArrayAdapter(Context context, int resource, List<String> fields, List<String> values) {
+        this(context, resource, fields);
+        this.values = values;
     }
 
     @Override
@@ -30,7 +38,11 @@ public class ElementArrayAdapter extends ArrayAdapter<String> {
         View rowView = layoutInflater.inflate(layout, parent, false);
 
         TextView textView = (TextView) rowView.findViewById(R.id.textFieldName);
-        textView.setText(values.get(position));
+        textView.setText(fields.get(position));
+        if(values != null){
+            EditText textFieldName = (EditText) rowView.findViewById(R.id.editFieldValue);
+            textFieldName.setText(values.get(position));
+        }
 
         return rowView;
     }
