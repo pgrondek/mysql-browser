@@ -108,8 +108,8 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         fakeScrollView.setOnTouchEventListener(new CustomScrollView.OnTouchEventListener() {
             @Override
             public boolean onTouchEvent(MotionEvent ev) {
-                entriesScrollView.dispatchTouchEvent(ev);
-                horizontalScrollView.onTouchEvent(ev);
+                ev.offsetLocation(0, headerFrame.getHeight());
+                horizontalScrollView.dispatchTouchEvent(ev);
                 return true;
             }
         });
