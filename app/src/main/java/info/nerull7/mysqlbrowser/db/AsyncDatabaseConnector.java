@@ -5,6 +5,7 @@ import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,6 +26,8 @@ public class AsyncDatabaseConnector {
     public static final String ACTION_FIELD_LIST = "fieldlist";
     public static final String ACTION_ENTRIES_COUNT = "numrows";
     public static final String ACTION_DATA_MATRIX = "getrows";
+    public static final String ACTION_ADD_ELEMENT = "addelement";
+    public static final String ACTION_UPDATE_ELEMENT = "updateelement";
 
     private String login;
     private String password;
@@ -169,6 +172,43 @@ public class AsyncDatabaseConnector {
         downloader.execute(urlQuery);
     }
 
+    public void addNewElement(String table, List<String> header, List<String> values) {
+        this.updateElement(table, header, null, values);
+    }
+
+    public void updateElement(String table, List<String> header, List<String> oldValues, List<String> newValues){
+        JSONArray headerJSON = new JSONArray();
+        JSONArray newValuesJSON = new JSONArray();
+        String request;
+
+        for(int i=0;i<header.size();i++){
+            headerJSON.put(header.get(i));
+        }
+
+        for(int i=0;i<newValues.size();i++){
+            newValuesJSON.put(newValues.get(i));
+        }
+
+        if(oldValues!=null){
+            JSONArray oldValuesJSON = new JSONArray();
+            for(int i=0;i<newValues.size();i++){
+                oldValuesJSON.put(oldValues.get(i));
+            }
+            request = actionUrlBuilder(ACTION_UPDATE_ELEMENT)+"&d="+database+"&t="+table+"&h="+headerJSON+"&v="+newValuesJSON+"&o="+oldValuesJSON;
+        } else
+            request = actionUrlBuilder(ACTION_ADD_ELEMENT)+"&d="+database+"&t="+table+"&h="+headerJSON+"&v="+newValuesJSON;
+
+        Downloader downloader = new Downloader(new Downloader.OnFinishedListener() {
+            @Override
+            public void onFinished(String data, String error) {
+                if(stringReturnListener!=null){
+                    stringReturnListener.onStringReturn(data);
+                }
+            }
+        });
+        downloader.execute(request);
+    }
+
     public void setBooleanReturnListener(BooleanReturnListener booleanReturnListener){
         this.booleanReturnListener = booleanReturnListener;
     }
@@ -226,6 +266,8 @@ public class AsyncDatabaseConnector {
             URL url = new URL(urlRequest);
             InputStream inputStream = null;
             String response;
+
+            Log.d("URL REQUEST", urlRequest);
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();  // TODO Handling no connection
             urlConnection.setReadTimeout(READ_TIMEOUT);

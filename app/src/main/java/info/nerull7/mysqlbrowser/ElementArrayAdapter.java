@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,5 +46,13 @@ public class ElementArrayAdapter extends ArrayAdapter<String> {
         }
 
         return rowView;
+    }
+
+    public List<String> getFieldArray(){
+        return fields;
+    }
+
+    public List<String> getValueArray(){
+        return values;
     }
 }
