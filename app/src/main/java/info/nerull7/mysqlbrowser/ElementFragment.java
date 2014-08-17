@@ -21,12 +21,13 @@ import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
 
 /**
  * Created by nerull7 on 2014-08-06.
+ *
+ * Fragment for editing/adding elements
  */
 public class ElementFragment extends Fragment implements AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.StringReturnListener {
     public static final String EDIT_ELEMENT = "edit_element";
     public static final String EDIT_LIST = "edit_element_list";
 
-    private String databaseName;
     private String tableName;
     private ElementArrayAdapter listAdapter;
 
@@ -67,7 +68,6 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
     }
 
     private void initArguments() {
-        databaseName = getArguments().getString(Static.DATABASE_NAME_ARG);
         tableName = getArguments().getString(Static.TABLE_NAME_ARG);
         if(getArguments().getBoolean(EDIT_ELEMENT))
             values = getArguments().getStringArrayList(EDIT_LIST);
