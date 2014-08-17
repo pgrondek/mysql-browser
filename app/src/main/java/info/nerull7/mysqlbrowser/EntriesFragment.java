@@ -28,6 +28,8 @@ import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
 
 /**
  * Created by nerull7 on 15.07.14.
+ *
+ * Fragment for showing elements
  */
 public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.MatrixReturnListener, AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.IntegerReturnListener, View.OnClickListener {
     private static final int HEADER_PADDING_TOP = 15;
@@ -42,10 +44,8 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     private TableLayout entriesTable;
     private ScrollView entriesScrollView;
     private FrameLayout headerFrame;
-    private RelativeLayout rootView;
     private HorizontalScrollView horizontalScrollView;
     private TableRow.LayoutParams layoutParams;
-    private TableRow headerRow;
 
     private String databaseName;
     private String tableName;
@@ -92,8 +92,6 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
         dummyView = rootView.findViewById(R.id.dummyView);
         horizontalScrollView = (HorizontalScrollView) rootView.findViewById(R.id.horizontalScrollView);
-
-        this.rootView = (RelativeLayout) rootView;
 
         fakeScrollView.setOnTouchEventListener(new CustomScrollView.OnTouchEventListener() {
             @Override
@@ -225,12 +223,13 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     @Override
     public void onListReturn(List<String> fieldList) {
         // First we need header
+        TableRow headerRow;
         headerRow = new TableRow(getActivity());
         headerRow.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
         rowCount = fieldList.size();
-        for(int i =0;i<fieldList.size();i++){
+        for (String aFieldList : fieldList) {
             TextView textView = new TextView(getActivity());
-            textView.setText(fieldList.get(i));
+            textView.setText(aFieldList);
             textView.setTypeface(null, Typeface.BOLD);
             textView.setLayoutParams(layoutParams);
             textView.setBackgroundResource(R.drawable.background_header);
