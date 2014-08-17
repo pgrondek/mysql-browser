@@ -17,6 +17,7 @@ import java.util.List;
 
 /**
  * Created by nerull7 on 07.07.14.
+ * Database connector using Async calls
  */
 public class AsyncDatabaseConnector {
     public static final String ACTION_LOGIN = "login";
@@ -123,7 +124,6 @@ public class AsyncDatabaseConnector {
         Downloader downloader = new Downloader(new Downloader.OnFinishedListener() {
             @Override
             public void onFinished(String data, String error) {
-                List<String>list = null;
                 boolean listenerData;
                 if(data == null) {
                     listenerData = false;
@@ -180,12 +180,12 @@ public class AsyncDatabaseConnector {
         JSONArray newValuesJSON = new JSONArray();
         String request;
 
-        for(int i=0;i<header.size();i++){
-            headerJSON.put(header.get(i));
+        for (String aHeader : header) {
+            headerJSON.put(aHeader);
         }
 
-        for(int i=0;i<newValues.size();i++){
-            newValuesJSON.put(newValues.get(i));
+        for (String newValue : newValues) {
+            newValuesJSON.put(newValue);
         }
 
         if(oldValues!=null){
@@ -296,7 +296,7 @@ public class AsyncDatabaseConnector {
             BufferedReader reader = null;
             try {
                 reader = new BufferedReader(new InputStreamReader(in));
-                String line = "";
+                String line;
                 while ((line = reader.readLine()) != null) {
                     streamOutput += line;
                 }
