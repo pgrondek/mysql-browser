@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import java.net.NetworkInterface;
-
 import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
 
 /**

@@ -9,13 +9,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.util.Base64;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-
 /**
  * Created by nerull7 on 18.07.14.
  */

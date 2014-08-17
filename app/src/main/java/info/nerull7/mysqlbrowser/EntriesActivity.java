@@ -2,11 +2,6 @@ package info.nerull7.mysqlbrowser;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-
-import java.util.zip.Inflater;
 
 public class EntriesActivity extends Activity {
 

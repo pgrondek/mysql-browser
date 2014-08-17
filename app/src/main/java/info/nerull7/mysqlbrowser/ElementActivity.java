@@ -2,13 +2,8 @@ package info.nerull7.mysqlbrowser;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import info.nerull7.mysqlbrowser.R;
 
 public class ElementActivity extends Activity {
 
