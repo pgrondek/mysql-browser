@@ -2,6 +2,7 @@ package info.nerull7.mysqlbrowser.db;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,8 +11,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,11 +57,32 @@ public class AsyncDatabaseConnector {
         matrixReturnListener=null;
     }
 
-    private String actionUrlBuilder(String action){ // TODO Better UrlBuilder this is shit only for use
+    private String actionUrlBuilder(String action){
         String urlBuilder = url;
         urlBuilder += "?u="+login;
         urlBuilder += "&p="+password;
         urlBuilder += "&a="+action;
+
+        return urlBuilder;
+    }
+
+    private String actionUrlBuilder(String action, String argument, String value){
+        ArrayList<String> arguments = new ArrayList<String>();
+        ArrayList<String> values = new ArrayList<String>();
+        arguments.add(argument);
+        values.add(value);
+        return this.actionUrlBuilder(action, arguments, values);
+    }
+
+    private String actionUrlBuilder(String action, List<String> arguments, List<String> values){ // TODO Better UrlBuilder this is shit only for use
+        String urlBuilder = actionUrlBuilder(action);
+        for (int i = 0; i < arguments.size(); i++) {
+            try {
+                urlBuilder += "&" + arguments.get(i) + "=" + URLEncoder.encode(values.get(i), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
 //        Log.d("URLBuilder", urlBuilder);
         return urlBuilder;
     }
@@ -147,20 +171,53 @@ public class AsyncDatabaseConnector {
     }
 
     public void getTables(){
-        getList(actionUrlBuilder(ACTION_TABLE_LIST)+"&d="+database);
+        getList(actionUrlBuilder(ACTION_TABLE_LIST, "d", database));
     }
 
     public void getFields(String table){
-        getList(actionUrlBuilder(ACTION_FIELD_LIST)+"&d="+database+"&t="+table);
+        ArrayList<String> args = new ArrayList<String>();
+        ArrayList<String> values = new ArrayList<String>();
+
+        args.add("d");
+        values.add(database);
+
+        args.add("t");
+        values.add(table);
+
+        getList(actionUrlBuilder(ACTION_FIELD_LIST, args, values));
     }
 
     public void getRows(String table, int count, int page){
         int limitStart = (page-1) * count;
-        getMatrix(actionUrlBuilder(ACTION_DATA_MATRIX)+"&d="+database+"&t="+table+"&s="+limitStart+"&l="+count);
+        ArrayList<String> args = new ArrayList<String>();
+        ArrayList<String> values = new ArrayList<String>();
+
+        args.add("d");
+        values.add(database);
+
+        args.add("t");
+        values.add(table);
+
+        args.add("s");
+        values.add(String.valueOf(limitStart));
+
+        args.add("l");
+        values.add(String.valueOf(count));
+
+        getMatrix(actionUrlBuilder(ACTION_DATA_MATRIX, args, values) );
     }
 
     public void getEntriesCount(String table){
-        String urlQuery = actionUrlBuilder(ACTION_ENTRIES_COUNT)+"&d="+database+"&t="+table;
+        ArrayList<String> args = new ArrayList<String>();
+        ArrayList<String> values = new ArrayList<String>();
+
+        args.add("d");
+        values.add(database);
+
+        args.add("t");
+        values.add(table);
+
+        String urlQuery = actionUrlBuilder(ACTION_ENTRIES_COUNT, args, values);
         Downloader downloader = new Downloader(new Downloader.OnFinishedListener() {
             @Override
             public void onFinished(String data, String error) {
@@ -180,6 +237,15 @@ public class AsyncDatabaseConnector {
         JSONArray newValuesJSON = new JSONArray();
         String request;
 
+        ArrayList<String> args = new ArrayList<String>();
+        ArrayList<String> values = new ArrayList<String>();
+
+        args.add("d");
+        values.add(database);
+
+        args.add("t");
+        values.add(table);
+
         for (String aHeader : header) {
             headerJSON.put(aHeader);
         }
@@ -188,14 +254,22 @@ public class AsyncDatabaseConnector {
             newValuesJSON.put(newValue);
         }
 
+        args.add("h");
+        values.add(headerJSON.toString());
+
+        args.add("v");
+        values.add(newValuesJSON.toString());
+
         if(oldValues!=null){
             JSONArray oldValuesJSON = new JSONArray();
             for(int i=0;i<newValues.size();i++){
                 oldValuesJSON.put(oldValues.get(i));
             }
-            request = actionUrlBuilder(ACTION_UPDATE_ELEMENT)+"&d="+database+"&t="+table+"&h="+headerJSON+"&v="+newValuesJSON+"&o="+oldValuesJSON;
+            args.add("o");
+            values.add(oldValuesJSON.toString());
+            request = actionUrlBuilder(ACTION_UPDATE_ELEMENT, args, values);
         } else
-            request = actionUrlBuilder(ACTION_ADD_ELEMENT)+"&d="+database+"&t="+table+"&h="+headerJSON+"&v="+newValuesJSON;
+            request = actionUrlBuilder(ACTION_ADD_ELEMENT, args, values);
 
         Downloader downloader = new Downloader(new Downloader.OnFinishedListener() {
             @Override
