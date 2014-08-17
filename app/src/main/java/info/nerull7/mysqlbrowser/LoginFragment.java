@@ -16,6 +16,8 @@ import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
 
 /**
  * Created by nerull7 on 07.07.14.
+ *
+ * Fragment for login
  */
 public class LoginFragment extends Fragment implements View.OnClickListener, AsyncDatabaseConnector.BooleanReturnListener {
     private EditText urlTextbox;
@@ -101,7 +103,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
             startActivity(intent);
         }
         else {
-            Static.showErrorAlert(Static.asyncDatabaseConnector.errorMsg, getActivity());
+            Static.showErrorAlert(AsyncDatabaseConnector.errorMsg, getActivity());
         }
         loginButton.setEnabled(true); // Now we can click button again
         progressBar.setVisibility(View.INVISIBLE);
