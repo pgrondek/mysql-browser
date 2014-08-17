@@ -23,6 +23,8 @@ import javax.crypto.SecretKey;
 
 /**
  * Created by nerull7 on 28.07.14.
+ *
+ * Class delegated to encrypt data
  */
 public class Crypto {
     private static final String KEY_FILE = "null_file"; // to trick h4x0r5
@@ -44,23 +46,19 @@ public class Crypto {
         }
     }
 
-    private SecretKey generateKey() throws NoSuchAlgorithmException {
+    private void generateKey() throws NoSuchAlgorithmException {
         SecureRandom secureRandom = new SecureRandom();
 
         KeyGenerator keyGenerator = KeyGenerator.getInstance(KEY_ALGORITHM);
         keyGenerator.init(OUTPUT_KEY_LENGTH, secureRandom);
-        SecretKey secretKey = keyGenerator.generateKey();
-
-        return secretKey;
+        secretKey = keyGenerator.generateKey();
     }
 
     private void getSecretKey() throws NoSuchAlgorithmException, IOException, ClassNotFoundException {
-        String key;
-
         // First try to open file
         File keyFile = new File(context.getFilesDir(), KEY_FILE);
         if(!keyFile.exists()) { // new key
-            secretKey = generateKey();
+            generateKey();
             FileOutputStream fileOutputStream =  new FileOutputStream(keyFile);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
             objectOutputStream.writeObject(secretKey);
@@ -95,7 +93,6 @@ public class Crypto {
 
     public String decryptBase64(String encodedString) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         byte [] encryptedString = Base64.decode(encodedString, Base64.DEFAULT);
-        String decrypted = decrypt(encryptedString);
-        return decrypted;
+        return decrypt(encryptedString);
     }
 }

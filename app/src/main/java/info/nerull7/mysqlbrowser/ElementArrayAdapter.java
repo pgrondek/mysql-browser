@@ -50,8 +50,4 @@ public class ElementArrayAdapter extends ArrayAdapter<String> {
     public List<String> getFieldArray(){
         return fields;
     }
-
-    public List<String> getValueArray(){
-        return values;
-    }
 }

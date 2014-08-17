@@ -6,11 +6,14 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.util.Base64;
 
 /**
  * Created by nerull7 on 18.07.14.
+ *
+ * Fragment for Preferences/Settings
  */
 public class SettingsFragment extends PreferenceFragment implements NumberPickerDialog.OnNumberSetListener, Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
     public static final String ENTRIES_PAGE_LIMIT = "entries_limit";
@@ -35,7 +38,8 @@ public class SettingsFragment extends PreferenceFragment implements NumberPicker
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        preferences = getPreferenceManager().getDefaultSharedPreferences(getActivity());
+        getPreferenceManager();
+        preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         crypto = new Crypto(getActivity());
 
         loadPrefs();
@@ -70,7 +74,6 @@ public class SettingsFragment extends PreferenceFragment implements NumberPicker
         }
         editor.putBoolean(SAVE_SERVER_CREDENTIALS, isEnabled);
         editor.apply();
-        editor.commit();
 
         if(!isEnabled)
             reloadLoginPrefsView();
@@ -80,7 +83,7 @@ public class SettingsFragment extends PreferenceFragment implements NumberPicker
         saveCredentials.setChecked(preferences.getBoolean(SAVE_SERVER_CREDENTIALS, false));
         connectorUrlCredentials.setText(preferences.getString(URL_CREDENTIALS, null));
         loginCredentials.setText(preferences.getString(LOGIN_CREDENTIALS, null));
-        passwordCredentials.setText(preferences.getString(PASSWORD_CREDENTIALS, null));;
+        passwordCredentials.setText(preferences.getString(PASSWORD_CREDENTIALS, null));
     }
 
     private int getEntriesPageLimit(){
