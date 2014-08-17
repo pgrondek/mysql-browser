@@ -1,7 +1,9 @@
 package info.nerull7.mysqlbrowser;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -106,8 +108,24 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
     }
 
     @Override
-    public void onStringReturn(String data) { //TODO Better UI handling
-        Static.showErrorAlert(data,getActivity());
-        getActivity().finish();
+    public void onStringReturn(String data) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(data);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                getActivity().finish();
+            }
+        });
+        /*builder.setNegativeButton(R.string.back, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // Nothing to do just get back
+            }
+        });*/
+        builder.setTitle(R.string.status);
+        builder.setIcon(R.drawable.ic_action_warning); //TODO Change Icon
+        builder.create();
+        builder.show();
     }
 }
