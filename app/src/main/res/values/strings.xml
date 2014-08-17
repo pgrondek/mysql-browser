@@ -37,5 +37,7 @@
     <string name="error_no_save">Your data will NOT be saved! Would you like to continue?</string>
     <string name="yes">Yes</string>
     <string name="warning">Warning</string>
+    <string name="status">Status</string>
+    <string name="back">Back</string>
 
 </resources>
