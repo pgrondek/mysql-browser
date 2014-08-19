@@ -19,7 +19,7 @@ import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
  *
  * Fragment for login
  */
-public class LoginFragment extends Fragment implements View.OnClickListener, AsyncDatabaseConnector.BooleanReturnListener {
+public class LoginFragment extends Fragment implements View.OnClickListener, AsyncDatabaseConnector.BooleanReturnListener, AsyncDatabaseConnector.OnPostExecuteListener {
     private EditText urlTextbox;
     private EditText loginTextbox;
     private EditText passwordTextbox;
@@ -86,6 +86,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
         if(Static.isNetworkConnected(getActivity())) {
             asyncDatabaseConnector = new AsyncDatabaseConnector(login, password, url);
             asyncDatabaseConnector.setBooleanReturnListener(this);
+            asyncDatabaseConnector.setOnPostExecuteListener(this);
             asyncDatabaseConnector.checkLogin();
         } else {
             Static.showErrorAlert(getResources().getString(R.string.no_connection), getActivity());
@@ -105,9 +106,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
         else {
             Static.showErrorAlert(AsyncDatabaseConnector.errorMsg, getActivity());
         }
-        loginButton.setEnabled(true); // Now we can click button again
-        progressBar.setVisibility(View.INVISIBLE);
     }
 
 
+    @Override
+    public void onPostExecute() {
+        loginButton.setEnabled(true); // Now we can click button again
+        progressBar.setVisibility(View.INVISIBLE);
+    }
 }

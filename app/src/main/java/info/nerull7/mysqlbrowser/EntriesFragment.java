@@ -31,7 +31,7 @@ import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
  *
  * Fragment for showing elements
  */
-public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.MatrixReturnListener, AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.IntegerReturnListener, View.OnClickListener {
+public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.MatrixReturnListener, AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.IntegerReturnListener, View.OnClickListener, AsyncDatabaseConnector.OnPostExecuteListener {
     private static final int HEADER_PADDING_TOP = 15;
     private static final int HEADER_PADDING_BOTTOM = 15;
     private static final int HEADER_PADDING_LEFT = 15;
@@ -57,7 +57,10 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     private CustomScrollView fakeScrollView;
     private View dummyView;
 
+    private int onPostExecuteListenerExecuted;
+
     private Menu menu;
+    private TableRow headerRow;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,6 +73,8 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         Static.asyncDatabaseConnector.setIntegerReturnListener(this);
         Static.asyncDatabaseConnector.setListReturnListener(this);
         Static.asyncDatabaseConnector.setMatrixReturnListener(this);
+        Static.asyncDatabaseConnector.setOnPostExecuteListener(this);
+        onPostExecuteListenerExecuted = 0;
         Static.asyncDatabaseConnector.getFields(tableName);
         Static.asyncDatabaseConnector.getEntriesCount(tableName);
 
@@ -203,9 +208,6 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
                 newRow.setClickable(true);
                 newRow.setOnClickListener(this);
                 entriesTable.addView(newRow);
-
-                syncWidths();
-                fakeScroll();
             }
         } else {
             TextView errorMessage = new TextView(getActivity());
@@ -223,7 +225,6 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     @Override
     public void onListReturn(List<String> fieldList) {
         // First we need header
-        TableRow headerRow;
         headerRow = new TableRow(getActivity());
         headerRow.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
         rowCount = fieldList.size();
@@ -236,7 +237,6 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
             textView.setPadding(HEADER_PADDING_LEFT, HEADER_PADDING_TOP, HEADER_PADDING_RIGHT, HEADER_PADDING_BOTTOM);
             headerRow.addView(textView);
         }
-        headerFrame.addView(headerRow);
 
         Static.asyncDatabaseConnector.getRows(tableName, entriesLimit, page);
     }
@@ -246,12 +246,15 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         pageCount = result/entriesLimit;
         if( result%entriesLimit > 0)
             pageCount++;
-
-        setHasOptionsMenu(true);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setHasOptionsMenu(true);
+            }
+        });
     }
 
     private void syncWidths(){ // TODO: Merge with adding columns maybe? Loops -= 3 should be quicker
-        TableRow headerRow = (TableRow) headerFrame.getChildAt(0);
         int maxWidth[]= new int[headerRow.getChildCount()];
         for(int i=0;i<headerRow.getChildCount();i++){
             TextView textView = (TextView) headerRow.getChildAt(i);
@@ -280,8 +283,8 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
             tmpHeader.setWidth(maxWidth[i]);
         }
 
-        headerFrame.setVisibility(View.VISIBLE);
-        entriesTable.setVisibility(View.VISIBLE);
+//        headerFrame.setVisibility(View.VISIBLE);
+//        entriesTable.setVisibility(View.VISIBLE);
     }
 
     private void fakeScroll(){
@@ -310,5 +313,14 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         intent.putExtra(ElementFragment.EDIT_ELEMENT, true);
         intent.putStringArrayListExtra(ElementFragment.EDIT_LIST, values);
         startActivity(intent);
+    }
+
+    @Override
+    public void onPostExecute() {
+        if(++onPostExecuteListenerExecuted==3){
+            headerFrame.addView(headerRow);
+            syncWidths();
+            fakeScroll();
+        }
     }
 }

@@ -24,11 +24,12 @@ import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
  *
  * Fragment for showing list of Available Databases for user
  */
-public class DatabaseFragment extends Fragment implements AdapterView.OnItemClickListener, AsyncDatabaseConnector.ListReturnListener {
+public class DatabaseFragment extends Fragment implements AdapterView.OnItemClickListener, AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.OnPostExecuteListener {
     private ListView databasesListView;
     private ListAdapter listAdapter;
     private RelativeLayout rootView;
     private ProgressBar progressBar;
+    private List<String> databases;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -39,6 +40,7 @@ public class DatabaseFragment extends Fragment implements AdapterView.OnItemClic
         progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
 
         Static.asyncDatabaseConnector.setListReturnListener(this);
+        Static.asyncDatabaseConnector.setOnPostExecuteListener(this);
         Static.asyncDatabaseConnector.getDatabases();
         return rootView;
     }
@@ -60,6 +62,11 @@ public class DatabaseFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onListReturn(List<String> databases) {
+        this.databases = databases;
+    }
+
+    @Override
+    public void onPostExecute() {
         if(databases!= null) {
             listAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, databases);
             databasesListView.setAdapter(listAdapter);

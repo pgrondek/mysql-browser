@@ -22,12 +22,13 @@ import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
 /**
  * Created by nerull7 on 14.07.14.
  */
-public class TableFragment extends Fragment implements AdapterView.OnItemClickListener, AsyncDatabaseConnector.ListReturnListener{
+public class TableFragment extends Fragment implements AdapterView.OnItemClickListener, AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.OnPostExecuteListener {
     private String databaseName;
     private ListView tablesList;
     private ListAdapter listAdapter;
     private RelativeLayout rootView;
     private ProgressBar progressBar;
+    private List<String> tables;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,6 +39,7 @@ public class TableFragment extends Fragment implements AdapterView.OnItemClickLi
         this.rootView = (RelativeLayout) rootView;
         progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
         Static.asyncDatabaseConnector.setListReturnListener(this);
+        Static.asyncDatabaseConnector.setOnPostExecuteListener(this);
         Static.asyncDatabaseConnector.getTables();
         return rootView;
     }
@@ -59,6 +61,11 @@ public class TableFragment extends Fragment implements AdapterView.OnItemClickLi
 
     @Override
     public void onListReturn(List<String> tables) {
+        this.tables = tables;
+    }
+
+    @Override
+    public void onPostExecute() {
         if(tables != null) {
             listAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, tables);
             tablesList.setAdapter(listAdapter);

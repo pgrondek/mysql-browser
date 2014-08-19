@@ -45,6 +45,7 @@ public class AsyncDatabaseConnector {
     private MatrixReturnListener matrixReturnListener;
 
     public static String errorMsg;
+    private OnPostExecuteListener onPostExecuteListener;
 
     public AsyncDatabaseConnector(String login, String password, String url){
         this.login = login;
@@ -99,10 +100,18 @@ public class AsyncDatabaseConnector {
                 try {
                     list = parseListFromJSON(data);
                 } catch (JSONException e) { e.printStackTrace(); }
-                if(listReturnListener!=null)
-                    listReturnListener.onListReturn(list);
+                if(listReturnListener!=null) {
+                    final List<String> finalList = list;
+//                    new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+                            listReturnListener.onListReturn(finalList);
+//
+//                        }
+//                    }).run();
+                }
             }
-        });
+        }, onPostExecuteListener);
         downloader.execute(urlQuery);
     }
 
@@ -117,7 +126,7 @@ public class AsyncDatabaseConnector {
                 if(matrixReturnListener!=null)
                     matrixReturnListener.onMatrixReturn(list);
             }
-        });
+        }, onPostExecuteListener);
         downloader.execute(urlQuery);
     }
 
@@ -161,7 +170,7 @@ public class AsyncDatabaseConnector {
 
                 booleanReturnListener.onBooleanReturn(listenerData);
             }
-        });
+        }, onPostExecuteListener);
         downloader.execute(actionUrlBuilder(ACTION_LOGIN));
         return false;
     }
@@ -224,7 +233,7 @@ public class AsyncDatabaseConnector {
                 if(integerReturnListener!=null)
                     integerReturnListener.onIntegerReturn(Integer.parseInt(data));
             }
-        });
+        }, onPostExecuteListener);
         downloader.execute(urlQuery);
     }
 
@@ -278,7 +287,7 @@ public class AsyncDatabaseConnector {
                     stringReturnListener.onStringReturn(data);
                 }
             }
-        });
+        }, onPostExecuteListener);
         downloader.execute(request);
     }
 
@@ -302,6 +311,10 @@ public class AsyncDatabaseConnector {
         this.matrixReturnListener = matrixReturnListener;
     }
 
+    public void setOnPostExecuteListener(OnPostExecuteListener onPostExecuteListener){
+        this.onPostExecuteListener = onPostExecuteListener;
+    }
+
     public static interface BooleanReturnListener{
         public void onBooleanReturn(boolean result);
     }
@@ -322,16 +335,22 @@ public class AsyncDatabaseConnector {
         public void onMatrixReturn(List<List<String>> data);
     }
 
+    public static interface OnPostExecuteListener {
+        void onPostExecute();
+    }
+
     private static class Downloader extends AsyncTask<String, Void, String> {
         private OnFinishedListener onFinishedListener;
+        private OnPostExecuteListener onPostExecuteListener;
         private String errorString;
 
         public static final String CONNECTION_REQUEST_METHOD = "GET";
         public static final int CONNECTION_TIMEOUT = 15000;
         public static final int READ_TIMEOUT = 10000;
 
-        Downloader(OnFinishedListener onFinishedListener){
+        Downloader(OnFinishedListener onFinishedListener, OnPostExecuteListener onPostExecuteListener){
             this.onFinishedListener = onFinishedListener;
+            this.onPostExecuteListener = onPostExecuteListener;
             errorString = null;
         }
 
@@ -385,7 +404,8 @@ public class AsyncDatabaseConnector {
         @Override
         protected String doInBackground(String... strings) {
             try {
-                return httpRequest(strings[0]);
+                String data = httpRequest(strings[0]);
+                onFinishedListener.onFinished(data, errorMsg); // Can't be null cos we demand listener in constructor
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -394,11 +414,17 @@ public class AsyncDatabaseConnector {
 
         @Override
         protected void onPostExecute(String data) {
-            onFinishedListener.onFinished(data, errorString); // Can't be null cos we demand listener in constructor
+            if (onPostExecuteListener!=null)
+                onPostExecuteListener.onPostExecute();
+        }
+
+        public void setOnPostExecuteListener(OnPostExecuteListener onPostExecuteListener) {
+            this.onPostExecuteListener = onPostExecuteListener;
         }
 
         private static interface OnFinishedListener {
             void onFinished(String data, String error);
         }
+
     }
 }
