@@ -102,7 +102,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
             }
         });
 
-        layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+        layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT);
         headerFrame.setVisibility(View.INVISIBLE);
         entriesTable.setVisibility(View.INVISIBLE);
     }
