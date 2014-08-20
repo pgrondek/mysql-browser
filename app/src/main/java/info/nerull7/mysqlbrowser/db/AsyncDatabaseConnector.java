@@ -359,7 +359,7 @@ public class AsyncDatabaseConnector {
             InputStream inputStream = null;
             String response;
 
-            Log.d("URL REQUEST", urlRequest);
+//            Log.d("URL REQUEST", urlRequest);
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();  // TODO Handling no connection
             urlConnection.setReadTimeout(READ_TIMEOUT);
