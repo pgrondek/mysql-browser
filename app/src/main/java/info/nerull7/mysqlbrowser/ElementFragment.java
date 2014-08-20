@@ -147,6 +147,7 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
         });*/
         builder.setTitle(R.string.status);
         builder.setIcon(R.drawable.ic_action_warning); //TODO Change Icon
+        builder.setCancelable(false); // There is no exit
         builder.create();
         builder.show();
     }
