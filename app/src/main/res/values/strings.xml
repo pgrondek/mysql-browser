@@ -40,7 +40,7 @@
     <string name="error_no_tables">No tables in this database</string>
     <string name="error_no_entries">No entries in this table</string>
     <string name="error_no_databases">No available databases</string>
-    <string name="error_no_save">Your data will NOT be saved! Would you like to continue?</string>
+    <string name="error_no_save">Your data will <b>NOT</b> be saved! Would you like to continue?</string>
     <string name="error_remove">This entry will be removed from database. This action <b>CAN NOT</b> be reversed! Would you like to continue?</string>
 
     <string name="pref_entries_per_page">Set number of entries per page</string>
