@@ -101,14 +101,7 @@ public class AsyncDatabaseConnector {
                     list = parseListFromJSON(data);
                 } catch (JSONException e) { e.printStackTrace(); }
                 if(listReturnListener!=null) {
-                    final List<String> finalList = list;
-//                    new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-                            listReturnListener.onListReturn(finalList);
-//
-//                        }
-//                    }).run();
+                    listReturnListener.onListReturn(list);
                 }
             }
         }, onPostExecuteListener);
