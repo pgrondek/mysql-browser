@@ -13,6 +13,7 @@
     <string name="title_activity_setting">Settings</string>
     <string name="title_activity_element">ElementActivity</string>
     <string name="title_activity_list">ListActivity</string>
+    <string name="title_fragment_database">Available Databases</string>
 
     <string name="login">Log in</string>
     <string name="password">Password</string>
