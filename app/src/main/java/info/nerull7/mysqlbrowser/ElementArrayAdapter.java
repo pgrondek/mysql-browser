@@ -40,7 +40,7 @@ public class ElementArrayAdapter extends ArrayAdapter<String> {
         TextView textView = (TextView) rowView.findViewById(R.id.textFieldName);
         textView.setText(fields.get(position));
         if(values != null){
-            EditText textFieldName = (EditText) rowView.findViewById(R.id.editFieldValue);
+            TextView textFieldName = (TextView) rowView.findViewById(R.id.editFieldValue);
             textFieldName.setText(values.get(position));
         }
 
