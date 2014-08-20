@@ -63,6 +63,8 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     private TableRow headerRow;
     private int[] maxWidth;
 
+    private boolean isFirstCreate;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -70,11 +72,8 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
 
         initArguments();
         initViewItems(rootView);
+        initListeners();
 
-        Static.asyncDatabaseConnector.setIntegerReturnListener(this);
-        Static.asyncDatabaseConnector.setListReturnListener(this);
-        Static.asyncDatabaseConnector.setMatrixReturnListener(this);
-        Static.asyncDatabaseConnector.setOnPostExecuteListener(this);
         onPostExecuteListenerExecuted = 0;
         Static.asyncDatabaseConnector.getFields(tableName);
         Static.asyncDatabaseConnector.getEntriesCount(tableName);
@@ -86,6 +85,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         databaseName = getArguments().getString(Static.DATABASE_NAME_ARG);
         tableName = getArguments().getString(Static.TABLE_NAME_ARG);
         page = 1;
+        isFirstCreate = true;
 
         entriesLimit = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt(SettingsFragment.ENTRIES_PAGE_LIMIT, SettingsFragment.ENTRIES_PAGE_LIMIT_DEF);
     }
@@ -109,6 +109,13 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         });
 
         layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT);
+    }
+
+    private void initListeners(){
+        Static.asyncDatabaseConnector.setIntegerReturnListener(this);
+        Static.asyncDatabaseConnector.setListReturnListener(this);
+        Static.asyncDatabaseConnector.setMatrixReturnListener(this);
+        Static.asyncDatabaseConnector.setOnPostExecuteListener(this);
     }
 
     @Override
@@ -307,6 +314,17 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         intent.putExtra(ElementFragment.EDIT_ELEMENT, true);
         intent.putStringArrayListExtra(ElementFragment.EDIT_LIST, values);
         startActivity(intent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(!isFirstCreate) {
+            initListeners(); // Could be overwritten
+            loadAnotherPage(); // This reloads entries
+        } else {
+            isFirstCreate = false;
+        }
     }
 
     @Override
