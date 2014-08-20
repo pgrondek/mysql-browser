@@ -60,23 +60,57 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
         return rootView;
     }
 
+    private void actionSave(){
+        List<String> fields = listAdapter.getFieldArray();
+        Static.asyncDatabaseConnector.setStringReturnListener(this);
+        if(getArguments().getBoolean(EDIT_ELEMENT))
+            Static.asyncDatabaseConnector.updateElement(tableName, fields, values, getNewValues());
+        else
+            Static.asyncDatabaseConnector.addNewElement(tableName, fields, getNewValues());
+    }
+
+    private void actionRemove(){
+        final List<String> fields = listAdapter.getFieldArray();
+        Static.asyncDatabaseConnector.setStringReturnListener(this);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.error_remove);
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Static.asyncDatabaseConnector.removeElement(tableName, fields, values);
+//                getActivity().finish();
+            }
+        });
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // Nothing to do just get back
+            }
+        });
+        builder.setTitle(R.string.warning);
+        builder.setIcon(R.drawable.ic_action_warning);
+        builder.setCancelable(false); // There is no exit
+        builder.create();
+        builder.show();
+
+
+
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        List<String> fields = listAdapter.getFieldArray();
-        if(item.getItemId() == R.id.action_save ){
-            Static.asyncDatabaseConnector.setStringReturnListener(this);
-            if(getArguments().getBoolean(EDIT_ELEMENT))
-                Static.asyncDatabaseConnector.updateElement(tableName, fields, values, getNewValues());
-            else
-                Static.asyncDatabaseConnector.addNewElement(tableName, fields, getNewValues());
-            return true;
-        } else if(item.getItemId() == R.id.action_remove) {
-            Static.asyncDatabaseConnector.setStringReturnListener(this);
-            Static.asyncDatabaseConnector.removeElement(tableName, fields, values);
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
+        switch (item.getItemId()){
+            case R.id.action_save:
+                actionSave();
+                break;
+            case R.id.action_remove:
+                actionRemove();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
         }
+        return true;
     }
 
     private void initArguments() {
@@ -152,9 +186,10 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
             }
         });*/
         builder.setTitle(R.string.status);
-        builder.setIcon(R.drawable.ic_action_warning); //TODO Change Icon
+        builder.setIcon(R.drawable.ic_action_warning);
         builder.setCancelable(false); // There is no exit
         builder.create();
         builder.show();
     }
+
 }
