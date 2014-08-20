@@ -7,4 +7,9 @@
         android:showAsAction="always"
         android:icon="@drawable/ic_action_save"/>
 
+    <item android:id="@+id/action_remove"
+        android:title="@string/action_remove"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_action_delete"/>
+
 </menu>

@@ -28,6 +28,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
 
     AsyncDatabaseConnector asyncDatabaseConnector;
 
+    private boolean result;
+
     public LoginFragment(){}
 
     @Override
@@ -97,6 +99,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
 
     @Override
     public void onBooleanReturn(boolean result) {
+        this.result = result;
+    }
+
+
+    @Override
+    public void onPostExecute() {
         if(result) {
             Static.asyncDatabaseConnector = asyncDatabaseConnector;
             Intent intent = new Intent(getActivity(), ListActivity.class);
@@ -106,11 +114,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
         else {
             Static.showErrorAlert(AsyncDatabaseConnector.errorMsg, getActivity());
         }
-    }
 
-
-    @Override
-    public void onPostExecute() {
         loginButton.setEnabled(true); // Now we can click button again
         progressBar.setVisibility(View.INVISIBLE);
     }

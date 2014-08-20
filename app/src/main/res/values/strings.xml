@@ -39,5 +39,7 @@
     <string name="warning">Warning</string>
     <string name="status">Status</string>
     <string name="back">Back</string>
+    <string name="action_remove">Remove</string>
+
 
 </resources>

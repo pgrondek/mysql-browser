@@ -62,14 +62,17 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        List<String> fields = listAdapter.getFieldArray();
         if(item.getItemId() == R.id.action_save ){
-            List<String> fields = listAdapter.getFieldArray();
-
             Static.asyncDatabaseConnector.setStringReturnListener(this);
             if(getArguments().getBoolean(EDIT_ELEMENT))
                 Static.asyncDatabaseConnector.updateElement(tableName, fields, values, getNewValues());
             else
                 Static.asyncDatabaseConnector.addNewElement(tableName, fields, getNewValues());
+            return true;
+        } else if(item.getItemId() == R.id.action_remove) {
+            Static.asyncDatabaseConnector.setStringReturnListener(this);
+            Static.asyncDatabaseConnector.removeElement(tableName, fields, values);
             return true;
         } else {
             return super.onOptionsItemSelected(item);
@@ -87,6 +90,9 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.element, menu);
+        if(!getArguments().getBoolean(EDIT_ELEMENT)) {
+            menu.findItem(R.id.action_remove).setVisible(false);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 

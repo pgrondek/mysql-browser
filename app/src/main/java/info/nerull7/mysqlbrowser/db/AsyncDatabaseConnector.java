@@ -31,6 +31,7 @@ public class AsyncDatabaseConnector {
     public static final String ACTION_DATA_MATRIX = "getrows";
     public static final String ACTION_ADD_ELEMENT = "addelement";
     public static final String ACTION_UPDATE_ELEMENT = "updateelement";
+    public static final String ACTION_REMOVE_ELEMENT = "removeelement";
 
     private String login;
     private String password;
@@ -206,7 +207,7 @@ public class AsyncDatabaseConnector {
         args.add("l");
         values.add(String.valueOf(count));
 
-        getMatrix(actionUrlBuilder(ACTION_DATA_MATRIX, args, values) );
+        getMatrix(actionUrlBuilder(ACTION_DATA_MATRIX, args, values));
     }
 
     public void getEntriesCount(String table){
@@ -272,6 +273,47 @@ public class AsyncDatabaseConnector {
             request = actionUrlBuilder(ACTION_UPDATE_ELEMENT, args, values);
         } else
             request = actionUrlBuilder(ACTION_ADD_ELEMENT, args, values);
+
+        Downloader downloader = new Downloader(new Downloader.OnFinishedListener() {
+            @Override
+            public void onFinished(String data, String error) {
+                if(stringReturnListener!=null){
+                    stringReturnListener.onStringReturn(data);
+                }
+            }
+        }, onPostExecuteListener);
+        downloader.execute(request);
+    }
+
+    public void removeElement(String table, List<String> header, List<String> values) {
+        JSONArray headerJSON = new JSONArray();
+        JSONArray valuesJSON = new JSONArray();
+        String request;
+
+        ArrayList<String> args = new ArrayList<String>();
+        ArrayList<String> argValues = new ArrayList<String>();
+
+        args.add("d");
+        argValues.add(database);
+
+        args.add("t");
+        argValues.add(table);
+
+        for (String aHeader : header) {
+            headerJSON.put(aHeader);
+        }
+
+        for (String value : values) {
+            valuesJSON.put(value);
+        }
+
+        args.add("h");
+        argValues.add(headerJSON.toString());
+
+        args.add("v");
+        argValues.add(valuesJSON.toString());
+
+        request = actionUrlBuilder(ACTION_REMOVE_ELEMENT, args, argValues);
 
         Downloader downloader = new Downloader(new Downloader.OnFinishedListener() {
             @Override
