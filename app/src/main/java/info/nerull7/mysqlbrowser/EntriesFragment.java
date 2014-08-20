@@ -294,7 +294,8 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         dummyView.setMinimumHeight(height);
 
         RelativeLayout.LayoutParams fakeScrollLayout = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        fakeScrollLayout.setMargins(0,headerFrame.getHeight(),0,0);
+        headerFrame.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        fakeScrollLayout.setMargins(0,headerFrame.getMeasuredHeight(),0,0);
 
         fakeScrollView.setLayoutParams(fakeScrollLayout);
     }
@@ -330,10 +331,12 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     @Override
     public void onPostExecute() {
         if(++onPostExecuteListenerExecuted==3){
+            if(headerFrame.getChildCount()==0) // You can have only one child
+                headerFrame.addView(headerRow);
             if(entriesTable!=null) {
                 syncWidthsSecondStage();
-                fakeScroll();
                 entriesScrollView.addView(entriesTable);
+                fakeScroll();
             } else {
                 TextView errorMessage = new TextView(getActivity());
                 errorMessage.setText(R.string.error_no_entries);
@@ -341,8 +344,6 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
                 errorMessage.setClickable(false);
                 entriesScrollView.addView(errorMessage);
             }
-            if(headerFrame.getChildCount()==0) // You can have only one child
-                headerFrame.addView(headerRow);
             setLoading(false);
         }
     }
