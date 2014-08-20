@@ -61,6 +61,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
 
     private Menu menu;
     private TableRow headerRow;
+    private int[] maxWidth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -91,12 +92,12 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
 
     private void initViewItems(View rootView){
         headerFrame = (FrameLayout) rootView.findViewById(R.id.headerFrame);
-        entriesTable = (TableLayout) rootView.findViewById(R.id.entriesTable);
         entriesScrollView = (ScrollView) rootView.findViewById(R.id.entriesScrollView);
         fakeScrollView = (CustomScrollView) rootView.findViewById(R.id.fakeScroll);
         progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
         dummyView = rootView.findViewById(R.id.dummyView);
         horizontalScrollView = (HorizontalScrollView) rootView.findViewById(R.id.horizontalScrollView);
+        entriesTable = new TableLayout(getActivity());
 
         fakeScrollView.setOnTouchEventListener(new CustomScrollView.OnTouchEventListener() {
             @Override
@@ -108,8 +109,6 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         });
 
         layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.MATCH_PARENT);
-        headerFrame.setVisibility(View.INVISIBLE);
-        entriesTable.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -146,7 +145,9 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
 
     private void loadAnotherPage(){
         changeMenus(page);
-        entriesTable.removeAllViews(); // clean table
+        entriesScrollView.removeAllViews(); // clean table
+        entriesTable = new TableLayout(getActivity());
+        onPostExecuteListenerExecuted--;
 
         setLoading(true);
         Static.asyncDatabaseConnector.getRows(tableName, entriesLimit, page); // get new entries
@@ -208,18 +209,12 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
                 newRow.setClickable(true);
                 newRow.setOnClickListener(this);
                 entriesTable.addView(newRow);
+                syncWidthsFirstStage();
             }
         } else {
-            TextView errorMessage = new TextView(getActivity());
-            errorMessage.setText(R.string.error_no_entries);
-            errorMessage.setTypeface(null, Typeface.ITALIC);
-            errorMessage.setClickable(false);
-            entriesScrollView.removeView(entriesTable);
-            headerFrame.setVisibility(View.VISIBLE);
-            entriesScrollView.addView(errorMessage);
+            entriesTable = null;
         }
 
-        setLoading(false);
     }
 
     @Override
@@ -254,25 +249,27 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         });
     }
 
-    private void syncWidths(){ // TODO: Merge with adding columns maybe? Loops -= 3 should be quicker
-        int maxWidth[]= new int[headerRow.getChildCount()];
-        for(int i=0;i<headerRow.getChildCount();i++){
+    private void syncWidthsFirstStage() { // TODO: Merge with adding columns maybe? Loops -= 3 should be quicker
+        maxWidth = new int[headerRow.getChildCount()];
+        for (int i = 0; i < headerRow.getChildCount(); i++) {
             TextView textView = (TextView) headerRow.getChildAt(i);
             textView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             maxWidth[i] = textView.getMeasuredWidth();
         }
 
-        for(int i=0;i<entriesTable.getChildCount();i++){
+        for (int i = 0; i < entriesTable.getChildCount(); i++) {
             TableRow tableRow = (TableRow) entriesTable.getChildAt(i);
-            for(int j=0;j<tableRow.getChildCount();j++){
+            for (int j = 0; j < tableRow.getChildCount(); j++) {
                 TextView textView = (TextView) tableRow.getChildAt(j);
                 textView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 int width = textView.getMeasuredWidth();
-                if(width>maxWidth[j])
-                    maxWidth[j]=width;
+                if (width > maxWidth[j])
+                    maxWidth[j] = width;
             }
         }
+    }
 
+    private void syncWidthsSecondStage() {
         for(int i=0;i<headerRow.getChildCount();i++){
             TableRow entriesRow = (TableRow) entriesTable.getChildAt(0);
 
@@ -282,9 +279,6 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
             tmpEntries.setWidth(maxWidth[i]);
             tmpHeader.setWidth(maxWidth[i]);
         }
-
-//        headerFrame.setVisibility(View.VISIBLE);
-//        entriesTable.setVisibility(View.VISIBLE);
     }
 
     private void fakeScroll(){
@@ -318,9 +312,20 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     @Override
     public void onPostExecute() {
         if(++onPostExecuteListenerExecuted==3){
-            headerFrame.addView(headerRow);
-            syncWidths();
-            fakeScroll();
+            if(entriesTable!=null) {
+                syncWidthsSecondStage();
+                fakeScroll();
+                entriesScrollView.addView(entriesTable);
+            } else {
+                TextView errorMessage = new TextView(getActivity());
+                errorMessage.setText(R.string.error_no_entries);
+                errorMessage.setTypeface(null, Typeface.ITALIC);
+                errorMessage.setClickable(false);
+                entriesScrollView.addView(errorMessage);
+            }
+            if(headerFrame.getChildCount()==0) // You can have only one child
+                headerFrame.addView(headerRow);
+            setLoading(false);
         }
     }
 }

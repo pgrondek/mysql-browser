@@ -26,11 +26,11 @@
                 android:id="@+id/entriesScrollView"
                 android:layout_below="@+id/headerFrame"
                 android:scrollbars="none">
-                <TableLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/entriesTable">
-                </TableLayout>
+                <!--<TableLayout-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/entriesTable">-->
+                <!--</TableLayout>-->
             </ScrollView>
         </RelativeLayout>
     </HorizontalScrollView>

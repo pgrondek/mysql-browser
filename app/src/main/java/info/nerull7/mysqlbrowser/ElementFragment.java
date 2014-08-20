@@ -24,9 +24,14 @@ import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
  *
  * Fragment for editing/adding elements
  */
-public class ElementFragment extends Fragment implements AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.StringReturnListener {
+public class ElementFragment extends Fragment implements AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.StringReturnListener, AsyncDatabaseConnector.OnPostExecuteListener {
     public static final String EDIT_ELEMENT = "edit_element";
     public static final String EDIT_LIST = "edit_element_list";
+
+    private static final int POST_EXECUTE_NONE = 0;
+    private static final int POST_EXECUTE_GET_FIELDS = 1;
+    private static final int POST_EXECUTE_UPDATE_ELEMENT = 2;
+    private static final int POST_EXECUTE_ADD_ELEMENT = 3;
 
     private String tableName;
     private ElementArrayAdapter listAdapter;
@@ -35,6 +40,8 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
     private ListView listView;
 
     private List<String> values;
+    private String message;
+    private int postExecute;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,7 +52,9 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
 
         initArguments();
 
+        postExecute = POST_EXECUTE_NONE;
         Static.asyncDatabaseConnector.setListReturnListener(this);
+        Static.asyncDatabaseConnector.setOnPostExecuteListener(this);
         Static.asyncDatabaseConnector.getFields(tableName);
 
         return rootView;
@@ -84,12 +93,8 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
     @Override
     public void onListReturn(List<String> fields) {
         listAdapter = new ElementArrayAdapter(getActivity(), R.layout.list_item_element_simple, fields, values);
-        listView.setAdapter(listAdapter);
-//        databasesListView.setAdapter(listAdapter);
-//        databasesListView.setOnItemClickListener(this);
-        progressBar.setVisibility(View.INVISIBLE);
+        postExecute = POST_EXECUTE_GET_FIELDS;
 
-        setHasOptionsMenu(true);
     }
 
     private List<String> getNewValues(){
@@ -104,8 +109,30 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
 
     @Override
     public void onStringReturn(String data) {
+        message = data;
+        postExecute = POST_EXECUTE_ADD_ELEMENT;
+    }
+
+    @Override
+    public void onPostExecute() {
+        switch (postExecute){
+            case POST_EXECUTE_GET_FIELDS:
+                listView.setAdapter(listAdapter);
+                progressBar.setVisibility(View.INVISIBLE);
+                setHasOptionsMenu(true);
+                break;
+            case POST_EXECUTE_ADD_ELEMENT:
+            case POST_EXECUTE_UPDATE_ELEMENT:
+                showInfo(message);
+                break;
+        }
+        // Clean after execute
+        postExecute = POST_EXECUTE_NONE;
+    }
+
+    private void showInfo(String info){
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(data);
+        builder.setMessage(info);
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
