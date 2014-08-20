@@ -12,11 +12,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import info.nerull7.mysqlbrowser.R;
 
 /**
  * Created by nerull7 on 07.07.14.
@@ -400,7 +403,14 @@ public class AsyncDatabaseConnector {
             urlConnection.setReadTimeout(READ_TIMEOUT);
             urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
             urlConnection.setRequestMethod(CONNECTION_REQUEST_METHOD);
-            urlConnection.connect();
+            try {
+                urlConnection.connect();
+            } catch (ConnectException e) {
+//                errorMsg = e.getMessage();
+                if (e.getCause().equals(CONNECTION_REQUEST_METHOD)) {
+                    errorMsg == R.string.error_connection_timeout; // FIXME
+                }
+            }
 
             if(urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 try {
