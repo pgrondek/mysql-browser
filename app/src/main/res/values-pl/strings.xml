@@ -37,6 +37,9 @@
     <string name="error_no_databases">Brak dostępnych baz</string>
     <string name="error_no_save">Twoje dane <b>NIE</b> zostaną zapisane! Czy chciałbyś kontynuować?</string>
     <string name="error_remove">Ten wpis zostanie usunięty z bazy. Tej akcji <b>NIE MOŻNA</b> cofnąć! Czy chciałbyś kontynuować?</string>
+    <string name="error_connection_timeout">Przekroczono czas połączenia</string>
+    <string name="error_connection_reset">Połączenie zostało zrestartowane</string>
+    <string name="error_connection_unreachable">No route to host</string>
 
     <string name="pref_entries_per_page">Ustaw limit wpisów na stronę</string>
     <string name="login_settings">Poświadczenia logowania</string>

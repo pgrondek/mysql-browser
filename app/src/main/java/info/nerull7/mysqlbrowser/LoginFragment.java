@@ -86,7 +86,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
         url = urlTextbox.getText().toString();
 
         if(Static.isNetworkConnected(getActivity())) {
-            asyncDatabaseConnector = new AsyncDatabaseConnector(login, password, url);
+            asyncDatabaseConnector = new AsyncDatabaseConnector(login, password, url, getActivity().getResources());
             asyncDatabaseConnector.setBooleanReturnListener(this);
             asyncDatabaseConnector.setOnPostExecuteListener(this);
             asyncDatabaseConnector.checkLogin();

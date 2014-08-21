@@ -1,5 +1,6 @@
 package info.nerull7.mysqlbrowser.db;
 
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -12,11 +13,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import info.nerull7.mysqlbrowser.R;
 
 /**
  * Created by nerull7 on 07.07.14.
@@ -39,6 +45,8 @@ public class AsyncDatabaseConnector {
 
     private String database;
 
+    private final Resources resources;
+
     private BooleanReturnListener booleanReturnListener;
     private IntegerReturnListener integerReturnListener;
     private StringReturnListener stringReturnListener;
@@ -48,10 +56,11 @@ public class AsyncDatabaseConnector {
     public static String errorMsg;
     private OnPostExecuteListener onPostExecuteListener;
 
-    public AsyncDatabaseConnector(String login, String password, String url){
+    public AsyncDatabaseConnector(String login, String password, String url, Resources resources){
         this.login = login;
         this.password = password;
         this.url = url;
+        this.resources = resources;
 
         booleanReturnListener=null;
         stringReturnListener=null;
@@ -104,8 +113,9 @@ public class AsyncDatabaseConnector {
                 if(listReturnListener!=null) {
                     listReturnListener.onListReturn(list);
                 }
+                errorMsg = error;
             }
-        }, onPostExecuteListener);
+        }, onPostExecuteListener, resources);
         downloader.execute(urlQuery);
     }
 
@@ -119,8 +129,9 @@ public class AsyncDatabaseConnector {
                 } catch (JSONException e) { e.printStackTrace(); }
                 if(matrixReturnListener!=null)
                     matrixReturnListener.onMatrixReturn(list);
+                errorMsg = error;
             }
-        }, onPostExecuteListener);
+        }, onPostExecuteListener, resources);
         downloader.execute(urlQuery);
     }
 
@@ -161,10 +172,9 @@ public class AsyncDatabaseConnector {
                     errorMsg = data;
                     listenerData = false;
                 }
-
                 booleanReturnListener.onBooleanReturn(listenerData);
             }
-        }, onPostExecuteListener);
+        }, onPostExecuteListener, resources);
         downloader.execute(actionUrlBuilder(ACTION_LOGIN));
         return false;
     }
@@ -226,8 +236,9 @@ public class AsyncDatabaseConnector {
             public void onFinished(String data, String error) {
                 if(integerReturnListener!=null)
                     integerReturnListener.onIntegerReturn(Integer.parseInt(data));
+                errorMsg = error;
             }
-        }, onPostExecuteListener);
+        }, onPostExecuteListener, resources);
         downloader.execute(urlQuery);
     }
 
@@ -280,8 +291,9 @@ public class AsyncDatabaseConnector {
                 if(stringReturnListener!=null){
                     stringReturnListener.onStringReturn(data);
                 }
+                errorMsg = error;
             }
-        }, onPostExecuteListener);
+        }, onPostExecuteListener, resources);
         downloader.execute(request);
     }
 
@@ -321,8 +333,9 @@ public class AsyncDatabaseConnector {
                 if(stringReturnListener!=null){
                     stringReturnListener.onStringReturn(data);
                 }
+                errorMsg = error;
             }
-        }, onPostExecuteListener);
+        }, onPostExecuteListener, resources);
         downloader.execute(request);
     }
 
@@ -378,14 +391,16 @@ public class AsyncDatabaseConnector {
         private OnFinishedListener onFinishedListener;
         private OnPostExecuteListener onPostExecuteListener;
         private String errorString;
+        private Resources resources;
 
         public static final String CONNECTION_REQUEST_METHOD = "GET";
         public static final int CONNECTION_TIMEOUT = 15000;
         public static final int READ_TIMEOUT = 10000;
 
-        Downloader(OnFinishedListener onFinishedListener, OnPostExecuteListener onPostExecuteListener){
+        Downloader(OnFinishedListener onFinishedListener, OnPostExecuteListener onPostExecuteListener, Resources resources){
             this.onFinishedListener = onFinishedListener;
             this.onPostExecuteListener = onPostExecuteListener;
+            this.resources = resources;
             errorString = null;
         }
 
@@ -400,22 +415,42 @@ public class AsyncDatabaseConnector {
             urlConnection.setReadTimeout(READ_TIMEOUT);
             urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
             urlConnection.setRequestMethod(CONNECTION_REQUEST_METHOD);
-            urlConnection.connect();
 
-            if(urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                try {
-                    inputStream = urlConnection.getInputStream();
-                    response = readStream(inputStream);
-                } finally {
-                    if(inputStream!=null)
-                        inputStream.close();
-                    urlConnection.disconnect();
+            try {
+                urlConnection.connect();
+
+                if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    try {
+                        inputStream = urlConnection.getInputStream();
+                        response = readStream(inputStream);
+                    } finally {
+                        if (inputStream != null)
+                            inputStream.close();
+                        urlConnection.disconnect();
+                    }
+                    return response;
+                } else {
+                    errorString = "ERROR " + urlConnection.getResponseCode() + ": " + urlConnection.getResponseMessage();
                 }
-                return response;
+            } catch (Exception e) {
+                parseException(e);
             }
-            else {
-                errorString = "ERROR "+urlConnection.getResponseCode()+": "+urlConnection.getResponseMessage();
-                return null;
+            return null;
+        }
+
+        private void parseException(Exception e){
+            if(e instanceof SocketException){
+                if(e.getMessage().contains("ECONNREFUSED")) {
+                    errorString = resources.getString(R.string.error_connection_refused);
+                } else if(e.getMessage().contains("EHOSTUNREACH")) {
+                    errorString = resources.getString(R.string.error_connection_unreachable);
+                } else {
+                    errorString = "Exception: " + e.getClass();
+                }
+            } else if (e instanceof  SocketTimeoutException){
+                errorString = resources.getString(R.string.error_connection_timeout);
+            } else {
+                errorString = "Exception: " + e.getClass();
             }
         }
 
@@ -440,7 +475,7 @@ public class AsyncDatabaseConnector {
         protected String doInBackground(String... strings) {
             try {
                 String data = httpRequest(strings[0]);
-                onFinishedListener.onFinished(data, errorMsg); // Can't be null cos we demand listener in constructor
+                onFinishedListener.onFinished(data, errorString); // Can't be null cos we demand listener in constructor
             } catch (IOException e) {
                 e.printStackTrace();
             }
