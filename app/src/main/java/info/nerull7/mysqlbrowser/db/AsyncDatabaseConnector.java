@@ -2,8 +2,6 @@ package info.nerull7.mysqlbrowser.db;
 
 import android.content.res.Resources;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,8 +10,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -68,16 +67,17 @@ public class AsyncDatabaseConnector {
         matrixReturnListener=null;
     }
 
-    private String actionUrlBuilder(String action){
-        String urlBuilder = url;
-        urlBuilder += "?u="+login;
-        urlBuilder += "&p="+password;
-        urlBuilder += "&a="+action;
+    private Request requestBuilder(String action){
+        Request request = new Request(url);
+        String urlData   = "u="+login
+                         + "&p="+password
+                         + "&a="+action;
+        request.data = urlData;
 
-        return urlBuilder;
+        return request;
     }
 
-    private String actionUrlBuilder(String action, String argument, String value){
+    private Request actionUrlBuilder(String action, String argument, String value){
         ArrayList<String> arguments = new ArrayList<String>();
         ArrayList<String> values = new ArrayList<String>();
         arguments.add(argument);
@@ -85,11 +85,11 @@ public class AsyncDatabaseConnector {
         return this.actionUrlBuilder(action, arguments, values);
     }
 
-    private String actionUrlBuilder(String action, List<String> arguments, List<String> values){ // TODO Better UrlBuilder this is shit only for use
-        String urlBuilder = actionUrlBuilder(action);
+    private Request actionUrlBuilder(String action, List<String> arguments, List<String> values){ // TODO Better UrlBuilder this is shit only for use
+        Request urlBuilder = requestBuilder(action);
         for (int i = 0; i < arguments.size(); i++) {
             try {
-                urlBuilder += "&" + arguments.get(i) + "=" + URLEncoder.encode(values.get(i), "UTF-8");
+                urlBuilder.data += "&" + arguments.get(i) + "=" + URLEncoder.encode(values.get(i), "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -102,7 +102,7 @@ public class AsyncDatabaseConnector {
         this.database = database;
     }
 
-    private void getList(String urlQuery){
+    private void getList(Request urlQuery){
         Downloader downloader = new Downloader(new Downloader.OnFinishedListener() {
             @Override
             public void onFinished(String data, String error) {
@@ -119,7 +119,7 @@ public class AsyncDatabaseConnector {
         downloader.execute(urlQuery);
     }
 
-    private void getMatrix(String urlQuery){
+    private void getMatrix(Request urlQuery){
         Downloader downloader = new Downloader(new Downloader.OnFinishedListener() {
             @Override
             public void onFinished(String data, String error) {
@@ -175,12 +175,12 @@ public class AsyncDatabaseConnector {
                 booleanReturnListener.onBooleanReturn(listenerData);
             }
         }, onPostExecuteListener, resources);
-        downloader.execute(actionUrlBuilder(ACTION_LOGIN));
+        downloader.execute(requestBuilder(ACTION_LOGIN));
         return false;
     }
 
     public void getDatabases(){
-        getList(actionUrlBuilder(ACTION_DATABASE_LIST));
+        getList(requestBuilder(ACTION_DATABASE_LIST));
     }
 
     public void getTables(){
@@ -230,7 +230,7 @@ public class AsyncDatabaseConnector {
         args.add("t");
         values.add(table);
 
-        String urlQuery = actionUrlBuilder(ACTION_ENTRIES_COUNT, args, values);
+        Request urlQuery = actionUrlBuilder(ACTION_ENTRIES_COUNT, args, values);
         Downloader downloader = new Downloader(new Downloader.OnFinishedListener() {
             @Override
             public void onFinished(String data, String error) {
@@ -249,7 +249,7 @@ public class AsyncDatabaseConnector {
     public void updateElement(String table, List<String> header, List<String> oldValues, List<String> newValues){
         JSONArray headerJSON = new JSONArray();
         JSONArray newValuesJSON = new JSONArray();
-        String request;
+        Request request;
 
         ArrayList<String> args = new ArrayList<String>();
         ArrayList<String> values = new ArrayList<String>();
@@ -300,7 +300,7 @@ public class AsyncDatabaseConnector {
     public void removeElement(String table, List<String> header, List<String> values) {
         JSONArray headerJSON = new JSONArray();
         JSONArray valuesJSON = new JSONArray();
-        String request;
+        Request request;
 
         ArrayList<String> args = new ArrayList<String>();
         ArrayList<String> argValues = new ArrayList<String>();
@@ -387,13 +387,13 @@ public class AsyncDatabaseConnector {
         void onPostExecute();
     }
 
-    private static class Downloader extends AsyncTask<String, Void, String> {
+    private static class Downloader extends AsyncTask<Request, Void, String> {
         private OnFinishedListener onFinishedListener;
         private OnPostExecuteListener onPostExecuteListener;
         private String errorString;
         private Resources resources;
 
-        public static final String CONNECTION_REQUEST_METHOD = "GET";
+        public static final String CONNECTION_REQUEST_METHOD = "POST";
         public static final int CONNECTION_TIMEOUT = 15000;
         public static final int READ_TIMEOUT = 10000;
 
@@ -404,8 +404,8 @@ public class AsyncDatabaseConnector {
             errorString = null;
         }
 
-        private String httpRequest(String urlRequest) throws IOException {
-            URL url = new URL(urlRequest);
+        private String httpRequest(Request urlRequest) throws IOException {
+            URL url = new URL(urlRequest.url);
             InputStream inputStream = null;
             String response;
 
@@ -415,6 +415,13 @@ public class AsyncDatabaseConnector {
             urlConnection.setReadTimeout(READ_TIMEOUT);
             urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
             urlConnection.setRequestMethod(CONNECTION_REQUEST_METHOD);
+
+            OutputStream outputStream = urlConnection.getOutputStream();
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
+            outputStreamWriter.write(urlRequest.data);
+            outputStreamWriter.flush();
+            outputStreamWriter.close();
+            outputStream.close();
 
             try {
                 urlConnection.connect();
@@ -472,9 +479,9 @@ public class AsyncDatabaseConnector {
         }
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected String doInBackground(Request... requests) {
             try {
-                String data = httpRequest(strings[0]);
+                String data = httpRequest(requests[0]);
                 onFinishedListener.onFinished(data, errorString); // Can't be null cos we demand listener in constructor
             } catch (IOException e) {
                 e.printStackTrace();
@@ -496,5 +503,14 @@ public class AsyncDatabaseConnector {
             void onFinished(String data, String error);
         }
 
+    }
+
+    class Request{
+        String url;
+        String data;
+
+        Request(String url){
+            this.url = url;
+        }
     }
 }
