@@ -53,5 +53,10 @@
     <string name="save_credentials">Save credentials</string>
     <string name="connector_url">Connector URL</string>
     <string name="no_connection">No Internet Connection</string>
+    <string name="sql_query">SQL Query</string>
+    <string name="title_activity_sql">SQL Query</string>
+    <string name="hint_sql_query">SQL Query</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_execute">Execute</string>
 
 </resources>

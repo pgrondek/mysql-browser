@@ -2,6 +2,7 @@ package info.nerull7.mysqlbrowser.db;
 
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +38,7 @@ public class AsyncDatabaseConnector {
     public static final String ACTION_ADD_ELEMENT = "addelement";
     public static final String ACTION_UPDATE_ELEMENT = "updateelement";
     public static final String ACTION_REMOVE_ELEMENT = "removeelement";
+    public static final String ACTION_SQL_QUERY = "query";
 
     private String login;
     private String password;
@@ -339,6 +341,44 @@ public class AsyncDatabaseConnector {
         downloader.execute(request);
     }
 
+    public void executeSQL(String database, String query){
+        ArrayList<String> args = new ArrayList();
+        ArrayList<String> values = new ArrayList();
+        final Request request;
+
+        if(database!=null){
+            args.add("d");
+            values.add(database);
+        }
+        args.add("q");
+        values.add(query);
+
+        request = actionUrlBuilder(ACTION_SQL_QUERY, args, values);
+
+        Downloader downloader = new Downloader(new Downloader.OnFinishedListener() {
+            @Override
+            public void onFinished(String data, String error) {
+                String []response = data.split("\n");
+
+                List<String>headerList = null;
+                try {
+                    headerList = parseListFromJSON(response[1]);
+                } catch (JSONException e) { e.printStackTrace(); }
+                if(listReturnListener!=null) {
+                    listReturnListener.onListReturn(headerList);
+                }
+
+                List<List<String>> dataMatrix = null;
+                try {
+                    dataMatrix = parseMatrixFromJSON(response[2]);
+                } catch (JSONException e) { e.printStackTrace(); }
+                if(matrixReturnListener!=null)
+                    matrixReturnListener.onMatrixReturn(dataMatrix);
+            }
+        }, onPostExecuteListener, resources);
+        downloader.execute(request);
+    }
+
     public void setBooleanReturnListener(BooleanReturnListener booleanReturnListener){
         this.booleanReturnListener = booleanReturnListener;
     }
@@ -468,14 +508,14 @@ public class AsyncDatabaseConnector {
                 reader = new BufferedReader(new InputStreamReader(in));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    streamOutput += line;
+                    streamOutput += line + '\n';
                 }
             } finally {
                 if (reader != null) {
                     reader.close();
                 }
             }
-            return streamOutput;
+            return streamOutput.substring(0, streamOutput.length()-1); // Remove last \n
         }
 
         @Override

@@ -34,6 +34,10 @@
             android:name=".ElementActivity"
             android:label="@string/title_activity_element" >
         </activity>
+        <activity
+            android:name=".SQLActivity"
+            android:label="@string/title_activity_sql">
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

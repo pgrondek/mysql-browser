@@ -51,4 +51,9 @@ public class Static {
         builder.create();
         builder.show();
     }
+
+    public static void startSQL(Context context) {
+        Intent intent = new Intent(context, SQLActivity.class);
+        context.startActivity(intent);
+    }
 }

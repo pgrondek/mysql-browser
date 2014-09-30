@@ -33,7 +33,7 @@ public class ListActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.logged, menu);
         return true;
     }
 
@@ -47,6 +47,8 @@ public class ListActivity extends Activity {
         if (id == R.id.action_settings) {
             Static.startSettings(this);
             return true;
+        } else if (id == R.id.action_sql){
+            Static.startSQL(this);
         }
         return super.onOptionsItemSelected(item);
     }
