@@ -58,5 +58,6 @@
     <string name="hint_sql_query">SQL Query</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_execute">Execute</string>
+    <string name="info">Information</string>
 
 </resources>

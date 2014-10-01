@@ -2,6 +2,7 @@ package info.nerull7.mysqlbrowser;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,12 +15,16 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
+
 /**
  * Created by nerull7 on 30.09.14.
  */
-public class SQLFragment extends Fragment{
+public class SQLFragment extends Fragment implements AsyncDatabaseConnector.OnPostExecuteListener {
     private EditText sqlEditText;
     private InputMethodManager inputMethodManager;
+    private SQLEntriesFragment sqlEntriesFragment;
+    private FragmentTransaction fragmentTransaction;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,7 +71,20 @@ public class SQLFragment extends Fragment{
         String sqlQuery = String.valueOf(sqlEditText.getText());
         Log.d("SQLQUERY", sqlQuery);
 
-        Static.asyncDatabaseConnector.setOnPostExecuteListener(null);
-        Static.asyncDatabaseConnector.executeSQL(null /*FIXME*/, sqlQuery);
+        fragmentTransaction = getFragmentManager().beginTransaction();
+        sqlEntriesFragment = new SQLEntriesFragment();
+        fragmentTransaction.replace(R.id.container, sqlEntriesFragment);
+        fragmentTransaction.commit();
+
+        Static.asyncDatabaseConnector.setStringReturnListener(sqlEntriesFragment);
+        Static.asyncDatabaseConnector.setListReturnListener(sqlEntriesFragment);
+        Static.asyncDatabaseConnector.setMatrixReturnListener(sqlEntriesFragment);
+        Static.asyncDatabaseConnector.setOnPostExecuteListener(this);
+        Static.asyncDatabaseConnector.executeSQL(getActivity().getIntent().getExtras().getString(Static.DATABASE_NAME_ARG), sqlQuery);
+    }
+
+    @Override
+    public void onPostExecute() {
+        sqlEntriesFragment.onPostExecute();
     }
 }

@@ -48,7 +48,7 @@ public class ListActivity extends Activity {
             Static.startSettings(this);
             return true;
         } else if (id == R.id.action_sql){
-            Static.startSQL(this);
+            Static.startSQL(this, getIntent().getExtras().getString(Static.DATABASE_NAME_ARG));
         }
         return super.onOptionsItemSelected(item);
     }

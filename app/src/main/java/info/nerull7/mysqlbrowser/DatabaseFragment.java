@@ -32,6 +32,12 @@ public class DatabaseFragment extends Fragment implements AdapterView.OnItemClic
     private List<String> databases;
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Static.asyncDatabaseConnector.setDatabaseInUse(null);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         //Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_database, container, false);

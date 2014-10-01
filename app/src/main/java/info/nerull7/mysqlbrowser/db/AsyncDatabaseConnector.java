@@ -360,20 +360,29 @@ public class AsyncDatabaseConnector {
             public void onFinished(String data, String error) {
                 String []response = data.split("\n");
 
-                List<String>headerList = null;
-                try {
-                    headerList = parseListFromJSON(response[1]);
-                } catch (JSONException e) { e.printStackTrace(); }
-                if(listReturnListener!=null) {
-                    listReturnListener.onListReturn(headerList);
-                }
+                if(response[0].equals("OK")) {
+                    List<String> headerList = null;
+                    try {
+                        headerList = parseListFromJSON(response[1]);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (listReturnListener != null) {
+                        listReturnListener.onListReturn(headerList);
+                    }
 
-                List<List<String>> dataMatrix = null;
-                try {
-                    dataMatrix = parseMatrixFromJSON(response[2]);
-                } catch (JSONException e) { e.printStackTrace(); }
-                if(matrixReturnListener!=null)
-                    matrixReturnListener.onMatrixReturn(dataMatrix);
+                    List<List<String>> dataMatrix = null;
+                    try {
+                        dataMatrix = parseMatrixFromJSON(response[2]);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (matrixReturnListener != null)
+                        matrixReturnListener.onMatrixReturn(dataMatrix);
+                } else {
+                    if(stringReturnListener!=null)
+                        stringReturnListener.onStringReturn(data);
+                }
             }
         }, onPostExecuteListener, resources);
         downloader.execute(request);
