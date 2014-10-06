@@ -120,6 +120,7 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        listView.requestFocus();
         switch (item.getItemId()){
             case R.id.action_save:
                 actionSave();
