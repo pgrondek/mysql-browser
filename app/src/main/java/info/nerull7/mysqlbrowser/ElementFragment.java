@@ -2,17 +2,22 @@ package info.nerull7.mysqlbrowser;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +55,21 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
         progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         listView = (ListView) rootView.findViewById(R.id.listView);
 
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if(scrollState==SCROLL_STATE_TOUCH_SCROLL) {
+                    listView.requestFocus();
+                    InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(listView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            }
+        });
+        listView.setItemsCanFocus(true);
         initArguments();
 
         postExecute = POST_EXECUTE_NONE;
@@ -64,9 +84,9 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
         List<String> fields = listAdapter.getFieldArray();
         Static.asyncDatabaseConnector.setStringReturnListener(this);
         if(getArguments().getBoolean(EDIT_ELEMENT))
-            Static.asyncDatabaseConnector.updateElement(tableName, fields, values, getNewValues());
+            Static.asyncDatabaseConnector.updateElement(tableName, fields, values, listAdapter.getValues());
         else
-            Static.asyncDatabaseConnector.addNewElement(tableName, fields, getNewValues());
+            Static.asyncDatabaseConnector.addNewElement(tableName, fields, listAdapter.getValues());
     }
 
     private void actionRemove(){
@@ -135,16 +155,6 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
         listAdapter = new ElementArrayAdapter(getActivity(), R.layout.list_item_element_simple, fields, values);
         postExecute = POST_EXECUTE_GET_FIELDS;
 
-    }
-
-    private List<String> getNewValues(){
-        List<String> newValues = new ArrayList<String>();
-
-        for(int i=0; i<listView.getChildCount();i++){
-            EditText editText = (EditText) listView.getChildAt(i).findViewById(R.id.editFieldValue);
-            newValues.add(String.valueOf(editText.getText()));
-        }
-        return newValues;
     }
 
     @Override

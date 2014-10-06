@@ -32,11 +32,13 @@
         </activity>
         <activity
             android:name=".ElementActivity"
-            android:label="@string/title_activity_element" >
+            android:label="@string/title_activity_element"
+            android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
             android:name=".SQLActivity"
-            android:label="@string/title_activity_sql">
+            android:label="@string/title_activity_sql"
+            android:windowSoftInputMode="adjustResize">
         </activity>
     </application>
 
