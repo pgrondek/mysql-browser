@@ -28,7 +28,7 @@ import info.nerull7.mysqlbrowser.R;
  * Created by nerull7 on 07.07.14.
  * Database connector using Async calls
  */
-public class AsyncDatabaseConnector {
+public class DatabaseConnector {
     public static final String ACTION_LOGIN = "login";
     public static final String ACTION_DATABASE_LIST = "dblist";
     public static final String ACTION_TABLE_LIST = "tablelist";
@@ -57,7 +57,7 @@ public class AsyncDatabaseConnector {
     public static String errorMsg;
     private OnPostExecuteListener onPostExecuteListener;
 
-    public AsyncDatabaseConnector(String login, String password, String url, Resources resources){
+    public DatabaseConnector(String login, String password, String url, Resources resources){
         this.login = login;
         this.password = password;
         this.url = url;
@@ -443,10 +443,10 @@ public class AsyncDatabaseConnector {
         private Resources resources;
 
         public static final String CONNECTION_REQUEST_METHOD = "POST";
-        public static final int CONNECTION_TIMEOUT = 15000;
-        public static final int READ_TIMEOUT = 10000;
+        public static final int CONNECTION_TIMEOUT = 15000; // ms
+        public static final int READ_TIMEOUT = 10000; // ms
 
-        Downloader(OnFinishedListener onFinishedListener, OnPostExecuteListener onPostExecuteListener, Resources resources){
+        private Downloader(OnFinishedListener onFinishedListener, OnPostExecuteListener onPostExecuteListener, Resources resources){
             this.onFinishedListener = onFinishedListener;
             this.onPostExecuteListener = onPostExecuteListener;
             this.resources = resources;

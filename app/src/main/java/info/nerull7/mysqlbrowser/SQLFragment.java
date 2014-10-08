@@ -1,6 +1,5 @@
 package info.nerull7.mysqlbrowser;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -15,12 +14,12 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
+import info.nerull7.mysqlbrowser.db.DatabaseConnector;
 
 /**
  * Created by nerull7 on 30.09.14.
  */
-public class SQLFragment extends Fragment implements AsyncDatabaseConnector.OnPostExecuteListener {
+public class SQLFragment extends Fragment implements DatabaseConnector.OnPostExecuteListener {
     private EditText sqlEditText;
     private InputMethodManager inputMethodManager;
     private SQLEntriesFragment sqlEntriesFragment;
@@ -76,11 +75,11 @@ public class SQLFragment extends Fragment implements AsyncDatabaseConnector.OnPo
         fragmentTransaction.replace(R.id.container, sqlEntriesFragment);
         fragmentTransaction.commit();
 
-        Static.asyncDatabaseConnector.setStringReturnListener(sqlEntriesFragment);
-        Static.asyncDatabaseConnector.setListReturnListener(sqlEntriesFragment);
-        Static.asyncDatabaseConnector.setMatrixReturnListener(sqlEntriesFragment);
-        Static.asyncDatabaseConnector.setOnPostExecuteListener(this);
-        Static.asyncDatabaseConnector.executeSQL(getActivity().getIntent().getExtras().getString(Static.DATABASE_NAME_ARG), sqlQuery);
+        Static.databaseConnector.setStringReturnListener(sqlEntriesFragment);
+        Static.databaseConnector.setListReturnListener(sqlEntriesFragment);
+        Static.databaseConnector.setMatrixReturnListener(sqlEntriesFragment);
+        Static.databaseConnector.setOnPostExecuteListener(this);
+        Static.databaseConnector.executeSQL(getActivity().getIntent().getExtras().getString(Static.DATABASE_NAME_ARG), sqlQuery);
     }
 
     @Override

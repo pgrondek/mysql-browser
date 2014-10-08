@@ -24,14 +24,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
+import info.nerull7.mysqlbrowser.db.DatabaseConnector;
 
 /**
  * Created by nerull7 on 15.07.14.
  *
  * Fragment for showing elements
  */
-public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.MatrixReturnListener, AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.IntegerReturnListener, View.OnClickListener, AsyncDatabaseConnector.OnPostExecuteListener {
+public class EntriesFragment extends Fragment implements DatabaseConnector.MatrixReturnListener, DatabaseConnector.ListReturnListener, DatabaseConnector.IntegerReturnListener, View.OnClickListener, DatabaseConnector.OnPostExecuteListener {
     private static final int HEADER_PADDING_TOP = 15;
     private static final int HEADER_PADDING_BOTTOM = 15;
     private static final int HEADER_PADDING_LEFT = 15;
@@ -75,8 +75,8 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         initListeners();
 
         onPostExecuteListenerExecuted = 0;
-        Static.asyncDatabaseConnector.getFields(tableName);
-        Static.asyncDatabaseConnector.getEntriesCount(tableName);
+        Static.databaseConnector.getFields(tableName);
+        Static.databaseConnector.getEntriesCount(tableName);
 
         return rootView;
     }
@@ -112,10 +112,10 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
     }
 
     private void initListeners(){
-        Static.asyncDatabaseConnector.setIntegerReturnListener(this);
-        Static.asyncDatabaseConnector.setListReturnListener(this);
-        Static.asyncDatabaseConnector.setMatrixReturnListener(this);
-        Static.asyncDatabaseConnector.setOnPostExecuteListener(this);
+        Static.databaseConnector.setIntegerReturnListener(this);
+        Static.databaseConnector.setListReturnListener(this);
+        Static.databaseConnector.setMatrixReturnListener(this);
+        Static.databaseConnector.setOnPostExecuteListener(this);
     }
 
     @Override
@@ -157,7 +157,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
         onPostExecuteListenerExecuted--;
 
         setLoading(true);
-        Static.asyncDatabaseConnector.getRows(tableName, entriesLimit, page); // get new entries
+        Static.databaseConnector.getRows(tableName, entriesLimit, page); // get new entries
     }
 
     private void addNewElement(){
@@ -240,7 +240,7 @@ public class EntriesFragment extends Fragment implements AsyncDatabaseConnector.
             headerRow.addView(textView);
         }
 
-        Static.asyncDatabaseConnector.getRows(tableName, entriesLimit, page);
+        Static.databaseConnector.getRows(tableName, entriesLimit, page);
     }
 
     @Override

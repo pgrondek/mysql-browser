@@ -3,14 +3,10 @@ package info.nerull7.mysqlbrowser;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,17 +19,16 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
+import info.nerull7.mysqlbrowser.db.DatabaseConnector;
 
 /**
  * Created by nerull7 on 15.07.14.
  *
  * Fragment for showing elements
  */
-public class SQLEntriesFragment extends Fragment implements AsyncDatabaseConnector.MatrixReturnListener, AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.OnPostExecuteListener, AsyncDatabaseConnector.StringReturnListener {
+public class SQLEntriesFragment extends Fragment implements DatabaseConnector.MatrixReturnListener, DatabaseConnector.ListReturnListener, DatabaseConnector.OnPostExecuteListener, DatabaseConnector.StringReturnListener {
     private static final int HEADER_PADDING_TOP = 15;
     private static final int HEADER_PADDING_BOTTOM = 15;
     private static final int HEADER_PADDING_LEFT = 15;

@@ -17,14 +17,14 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
+import info.nerull7.mysqlbrowser.db.DatabaseConnector;
 
 /**
  * Created by nerull7 on 14.07.14.
  *
  * Fragment for showing list of Available Databases for user
  */
-public class DatabaseFragment extends Fragment implements AdapterView.OnItemClickListener, AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.OnPostExecuteListener {
+public class DatabaseFragment extends Fragment implements AdapterView.OnItemClickListener, DatabaseConnector.ListReturnListener, DatabaseConnector.OnPostExecuteListener {
     private ListView databasesListView;
     private ListAdapter listAdapter;
     private RelativeLayout rootView;
@@ -34,7 +34,7 @@ public class DatabaseFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onResume() {
         super.onResume();
-        Static.asyncDatabaseConnector.setDatabaseInUse(null);
+        Static.databaseConnector.setDatabaseInUse(null);
     }
 
     @Override
@@ -45,9 +45,9 @@ public class DatabaseFragment extends Fragment implements AdapterView.OnItemClic
         this.rootView = (RelativeLayout) rootView;
         progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
 
-        Static.asyncDatabaseConnector.setListReturnListener(this);
-        Static.asyncDatabaseConnector.setOnPostExecuteListener(this);
-        Static.asyncDatabaseConnector.getDatabases();
+        Static.databaseConnector.setListReturnListener(this);
+        Static.databaseConnector.setOnPostExecuteListener(this);
+        Static.databaseConnector.getDatabases();
         return rootView;
     }
 
@@ -59,7 +59,7 @@ public class DatabaseFragment extends Fragment implements AdapterView.OnItemClic
             Intent intent = new Intent(getActivity(), ListActivity.class);
             intent.putExtra(Static.FRAGMENT_TO_START, Static.FRAGMENT_TABLE);
             intent.putExtra(Static.DATABASE_NAME_ARG, chosenDatabase);
-            Static.asyncDatabaseConnector.setDatabaseInUse(chosenDatabase);
+            Static.databaseConnector.setDatabaseInUse(chosenDatabase);
             startActivity(intent);
         } else {
             Static.showErrorAlert(getResources().getString(R.string.no_connection), getActivity());

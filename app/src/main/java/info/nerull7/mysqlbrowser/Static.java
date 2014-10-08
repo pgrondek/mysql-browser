@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
+import info.nerull7.mysqlbrowser.db.DatabaseConnector;
 
 /**
  * Created by nerull7 on 14.07.14.
@@ -20,7 +20,7 @@ public class Static {
     public static final String FRAGMENT_DATABASE = "DatabaseFragment";
     public static final String FRAGMENT_TABLE = "TableFragment";
 
-    public static AsyncDatabaseConnector asyncDatabaseConnector = null;
+    public static DatabaseConnector databaseConnector = null;
 
     public static void startSettings(Context context){
         Intent intent = new Intent(context, SettingsActivity.class);

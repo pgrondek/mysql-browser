@@ -12,21 +12,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
-import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
+import info.nerull7.mysqlbrowser.db.DatabaseConnector;
 
 /**
  * Created by nerull7 on 07.07.14.
  *
  * Fragment for login
  */
-public class LoginFragment extends Fragment implements View.OnClickListener, AsyncDatabaseConnector.BooleanReturnListener, AsyncDatabaseConnector.OnPostExecuteListener {
+public class LoginFragment extends Fragment implements View.OnClickListener, DatabaseConnector.BooleanReturnListener, DatabaseConnector.OnPostExecuteListener {
     private EditText urlTextbox;
     private EditText loginTextbox;
     private EditText passwordTextbox;
     private ProgressBar progressBar;
     private Button loginButton;
 
-    AsyncDatabaseConnector asyncDatabaseConnector;
+    DatabaseConnector databaseConnector;
 
     private boolean result;
 
@@ -86,10 +86,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
         url = urlTextbox.getText().toString();
 
         if(Static.isNetworkConnected(getActivity())) {
-            asyncDatabaseConnector = new AsyncDatabaseConnector(login, password, url, getActivity().getResources());
-            asyncDatabaseConnector.setBooleanReturnListener(this);
-            asyncDatabaseConnector.setOnPostExecuteListener(this);
-            asyncDatabaseConnector.checkLogin();
+            databaseConnector = new DatabaseConnector(login, password, url, getActivity().getResources());
+            databaseConnector.setBooleanReturnListener(this);
+            databaseConnector.setOnPostExecuteListener(this);
+            databaseConnector.checkLogin();
         } else {
             Static.showErrorAlert(getResources().getString(R.string.no_connection), getActivity());
             loginButton.setEnabled(true); // Now we can click button again
@@ -106,13 +106,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Asy
     @Override
     public void onPostExecute() {
         if(result) {
-            Static.asyncDatabaseConnector = asyncDatabaseConnector;
+            Static.databaseConnector = databaseConnector;
             Intent intent = new Intent(getActivity(), ListActivity.class);
             intent.putExtra(Static.FRAGMENT_TO_START, Static.FRAGMENT_DATABASE);
             startActivity(intent);
         }
         else {
-            Static.showErrorAlert(AsyncDatabaseConnector.errorMsg, getActivity());
+            Static.showErrorAlert(DatabaseConnector.errorMsg, getActivity());
         }
 
         loginButton.setEnabled(true); // Now we can click button again

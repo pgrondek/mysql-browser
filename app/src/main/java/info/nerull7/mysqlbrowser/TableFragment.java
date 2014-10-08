@@ -17,12 +17,12 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
+import info.nerull7.mysqlbrowser.db.DatabaseConnector;
 
 /**
  * Created by nerull7 on 14.07.14.
  */
-public class TableFragment extends Fragment implements AdapterView.OnItemClickListener, AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.OnPostExecuteListener {
+public class TableFragment extends Fragment implements AdapterView.OnItemClickListener, DatabaseConnector.ListReturnListener, DatabaseConnector.OnPostExecuteListener {
     private String databaseName;
     private ListView tablesList;
     private ListAdapter listAdapter;
@@ -38,9 +38,9 @@ public class TableFragment extends Fragment implements AdapterView.OnItemClickLi
         tablesList = (ListView) rootView.findViewById(R.id.tableList);
         this.rootView = (RelativeLayout) rootView;
         progressBar = (ProgressBar) rootView.findViewById(R.id.loginProgressBar);
-        Static.asyncDatabaseConnector.setListReturnListener(this);
-        Static.asyncDatabaseConnector.setOnPostExecuteListener(this);
-        Static.asyncDatabaseConnector.getTables();
+        Static.databaseConnector.setListReturnListener(this);
+        Static.databaseConnector.setOnPostExecuteListener(this);
+        Static.databaseConnector.getTables();
         return rootView;
     }
 

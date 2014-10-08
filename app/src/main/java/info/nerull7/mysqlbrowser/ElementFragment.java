@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,22 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import info.nerull7.mysqlbrowser.db.AsyncDatabaseConnector;
+import info.nerull7.mysqlbrowser.db.DatabaseConnector;
 
 /**
  * Created by nerull7 on 2014-08-06.
  *
  * Fragment for editing/adding elements
  */
-public class ElementFragment extends Fragment implements AsyncDatabaseConnector.ListReturnListener, AsyncDatabaseConnector.StringReturnListener, AsyncDatabaseConnector.OnPostExecuteListener {
+public class ElementFragment extends Fragment implements DatabaseConnector.ListReturnListener, DatabaseConnector.StringReturnListener, DatabaseConnector.OnPostExecuteListener {
     public static final String EDIT_ELEMENT = "edit_element";
     public static final String EDIT_LIST = "edit_element_list";
 
@@ -73,32 +69,32 @@ public class ElementFragment extends Fragment implements AsyncDatabaseConnector.
         initArguments();
 
         postExecute = POST_EXECUTE_NONE;
-        Static.asyncDatabaseConnector.setListReturnListener(this);
-        Static.asyncDatabaseConnector.setOnPostExecuteListener(this);
-        Static.asyncDatabaseConnector.getFields(tableName);
+        Static.databaseConnector.setListReturnListener(this);
+        Static.databaseConnector.setOnPostExecuteListener(this);
+        Static.databaseConnector.getFields(tableName);
 
         return rootView;
     }
 
     private void actionSave(){
         List<String> fields = listAdapter.getFieldArray();
-        Static.asyncDatabaseConnector.setStringReturnListener(this);
+        Static.databaseConnector.setStringReturnListener(this);
         if(getArguments().getBoolean(EDIT_ELEMENT))
-            Static.asyncDatabaseConnector.updateElement(tableName, fields, values, listAdapter.getValues());
+            Static.databaseConnector.updateElement(tableName, fields, values, listAdapter.getValues());
         else
-            Static.asyncDatabaseConnector.addNewElement(tableName, fields, listAdapter.getValues());
+            Static.databaseConnector.addNewElement(tableName, fields, listAdapter.getValues());
     }
 
     private void actionRemove(){
         final List<String> fields = listAdapter.getFieldArray();
-        Static.asyncDatabaseConnector.setStringReturnListener(this);
+        Static.databaseConnector.setStringReturnListener(this);
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.error_remove);
         builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Static.asyncDatabaseConnector.removeElement(tableName, fields, values);
+                Static.databaseConnector.removeElement(tableName, fields, values);
 //                getActivity().finish();
             }
         });
