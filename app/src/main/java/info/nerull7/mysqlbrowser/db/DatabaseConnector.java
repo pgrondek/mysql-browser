@@ -55,7 +55,7 @@ public class DatabaseConnector {
     private MatrixReturnListener matrixReturnListener;
 
     public static String errorMsg;
-    private Downloader.OnPostExecuteListener onPostExecuteListener;
+    private OnPostExecuteListener onPostExecuteListener;
 
     public DatabaseConnector(String login, String password, String url, Resources resources){
         this.login = login;
@@ -408,7 +408,7 @@ public class DatabaseConnector {
         this.matrixReturnListener = matrixReturnListener;
     }
 
-    public void setOnPostExecuteListener(Downloader.OnPostExecuteListener onPostExecuteListener){
+    public void setOnPostExecuteListener(OnPostExecuteListener onPostExecuteListener){
         this.onPostExecuteListener = onPostExecuteListener;
     }
 
@@ -432,7 +432,9 @@ public class DatabaseConnector {
         public void onMatrixReturn(List<List<String>> data);
     }
 
-
+    public static interface OnPostExecuteListener {
+        void onPostExecute();
+    }
 
     private static class Downloader extends AsyncTask<Request, Void, String> {
         private OnFinishedListener onFinishedListener;
@@ -550,9 +552,6 @@ public class DatabaseConnector {
             void onFinished(String data, String error);
         }
 
-        public static interface OnPostExecuteListener {
-            void onPostExecute();
-        }
     }
 
     class Request{
