@@ -3,8 +3,9 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
         android:title="@string/general_category">
-        <Preference
-            android:key="entries_limit"
+        <EditTextPreference
+            android:key="entries_limit_string"
+            android:numeric="integer"
             android:title="@string/entries_limit"
             android:summary="@string/entries_summary"
             />
