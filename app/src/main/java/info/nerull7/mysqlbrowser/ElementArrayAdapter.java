@@ -33,7 +33,13 @@ public class ElementArrayAdapter extends ArrayAdapter<String> {
         super(context, resource, fields);
         init(context, resource, fields);
         this.values = new ArrayList<String>();
-        this.values.addAll(values); // Copy
+        if(values!=null) {
+            this.values.addAll(values); // Copy
+        } else {
+            for(int i=0;i<fields.size();i++){
+                this.values.add(new String());
+            }
+        }
     }
 
     private void init(Context context, int resource, List<String> fields){
